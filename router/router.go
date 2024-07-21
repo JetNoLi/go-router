@@ -9,7 +9,7 @@ import (
 	"slices"
 
 	"github.com/a-h/templ"
-	// "github.com/jetnoli/go-net-utils/modules/utils"
+	"github.com/jetnoli/go-router/utils"
 )
 
 // TODO: REMOVE AND REPLACE WITH BUILT IN FUNC FROM HTTP LIB
@@ -66,7 +66,7 @@ func CreateRouter(path string, options RouterOptions) *Router {
 	return router
 }
 
-func (router Router) CreatePath(path string, method string) string {
+func (router Router) CreateRoute(path string, method string) string {
 	pathEndString := ""
 
 	if router.Options.ExactPathsOnly {
@@ -123,8 +123,8 @@ func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	// handlerName := utils.GetFunctionName(handler)
-	// fmt.Println("executing handler ", handlerName)
+	handlerName := utils.GetFunctionName(handler)
+	fmt.Println("executing handler ", handlerName)
 
 	handler(*w, r)
 
@@ -133,7 +133,7 @@ func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		// fmt.Printf("middleware applied %s", utils.GetFunctionName(middleware))
+		fmt.Printf("middleware applied %s", utils.GetFunctionName(middleware))
 		middleware(w, r)
 	}
 
@@ -142,7 +142,7 @@ func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Reque
 func (router Router) HandleFunc(path string, handler http.HandlerFunc, options *RouteOptions) {
 	router.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		rCtxCopy, cancel := context.WithCancel(r.Context())
-		*r = *r.WithContext(context.WithValue(rCtxCopy, "CANCEL_KEY", cancel))
+		*r = *r.WithContext(context.WithValue(rCtxCopy, utils.CancelRequestKey, cancel))
 
 		fmt.Println("Serving path ", path)
 		router.ExecuteWithMiddleware(&w, r, handler, options)
@@ -158,27 +158,27 @@ func (router Router) Handle(path string, mux *http.ServeMux) {
 }
 
 func (router Router) Get(path string, handler http.HandlerFunc, options *RouteOptions) {
-	route := router.CreatePath(path, "GET")
+	route := router.CreateRoute(path, "GET")
 	router.HandleFunc(route, handler, options)
 }
 
 func (router Router) Post(path string, handler http.HandlerFunc, options *RouteOptions) {
-	route := router.CreatePath(path, "POST")
+	route := router.CreateRoute(path, "POST")
 	router.HandleFunc(route, handler, options)
 }
 
 func (router Router) Delete(path string, handler http.HandlerFunc, options *RouteOptions) {
-	route := router.CreatePath(path, "DELETE")
+	route := router.CreateRoute(path, "DELETE")
 	router.HandleFunc(route, handler, options)
 }
 
 func (router Router) Put(path string, handler http.HandlerFunc, options *RouteOptions) {
-	route := router.CreatePath(path, "PUT")
+	route := router.CreateRoute(path, "PUT")
 	router.HandleFunc(route, handler, options)
 }
 
 func (router Router) Patch(path string, handler http.HandlerFunc, options *RouteOptions) {
-	route := router.CreatePath(path, "PATCH")
+	route := router.CreateRoute(path, "PATCH")
 	router.HandleFunc(route, handler, options)
 }
 
@@ -186,7 +186,7 @@ func (router Router) Patch(path string, handler http.HandlerFunc, options *Route
 
 // Serve file at the given filepath relative to app
 func (router Router) Serve(path string, filePath string, options *RouteOptions) {
-	route := router.CreatePath(path, "GET")
+	route := router.CreateRoute(path, "GET")
 
 	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
