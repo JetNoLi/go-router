@@ -1,4 +1,4 @@
-module github.com/jetnoli/go-net-utils
+module github.com/jetnoli/go-router
 
 go 1.22.2
 
