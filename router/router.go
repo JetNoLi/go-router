@@ -261,13 +261,40 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 }
 
 // Non Lib Specific
+type TemplPageHandler struct {
+	Service *http.HandlerFunc
+	Path    string
+	Method  string
+}
+
 type TemplPage struct {
 	PageComponent templ.Component
 	Options       *RouteOptions
+	Handlers      []TemplPageHandler
 }
 
-func (router Router) ServeTempl(pageMap map[string]*TemplPage) {
+func (router *Router) ServeTempl(pageMap map[string]*TemplPage) {
 	for route, page := range pageMap {
+		for _, handler := range page.Handlers {
+			switch handler.Method {
+			case "post":
+				{
+					router.Post(handler.Path, *handler.Service, &RouteOptions{})
+				}
+			case "put":
+				{
+					router.Put(handler.Path, *handler.Service, &RouteOptions{})
+				}
+			case "get":
+				{
+					router.Get(handler.Path, *handler.Service, &RouteOptions{})
+				}
+			case "delete":
+				{
+					router.Delete(handler.Path, *handler.Service, &RouteOptions{})
+				}
+			}
+		}
 
 		router.Get(route, func(w http.ResponseWriter, r *http.Request) {
 			err := page.PageComponent.Render(r.Context(), w)
@@ -277,5 +304,44 @@ func (router Router) ServeTempl(pageMap map[string]*TemplPage) {
 			}
 
 		}, page.Options)
+
 	}
+}
+
+func getPath(path string, method string) templ.Attributes {
+	return templ.Attributes{method: path}
+}
+
+// TODO: Brainstorm path to pass args
+type Cb = func() ([]byte, error)
+
+type TemplCb struct {
+	Cb Cb
+	//TODO: Add HTTP Callback
+	//TODO: Add Map Req To Args Func
+	//TODO: Add Error Callback
+	Options RouteOptions
+	Path    string
+}
+
+func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attributes {
+	htmxAttr := getPath(handler.Path, method)
+
+	route := router.CreateRoute(handler.Path, "GET")
+
+	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		data, err := handler.Cb()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(data)
+
+	}, &handler.Options)
+
+	return htmxAttr
 }
