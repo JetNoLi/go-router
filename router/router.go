@@ -327,7 +327,7 @@ type TemplCb struct {
 }
 
 func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attributes {
-	htmxAttr := getPath(handler.Path, method)
+	htmxAttr := getPath("/"+router.Path+handler.Path, method)
 
 	fmt.Println("attr", htmxAttr)
 
