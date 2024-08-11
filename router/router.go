@@ -313,7 +313,7 @@ func getPath(path string, method string) templ.Attributes {
 }
 
 // TODO: Brainstorm path to pass args
-type Cb = func() ([]byte, error)
+type Cb = func() (*templ.Component, error)
 
 type TemplCb struct {
 	Cb Cb
@@ -332,14 +332,23 @@ func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attribut
 	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		data, err := handler.Cb()
+		component, err := handler.Cb()
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		w.Write(data)
+		if component == nil {
+			//TODO: Handle nil component
+			return
+		}
+
+		err = (*component).Render(r.Context(), w)
+
+		if err != nil {
+			http.Error(w, "Error Rendering User: "+err.Error(), http.StatusInternalServerError)
+		}
 
 	}, &handler.Options)
 
