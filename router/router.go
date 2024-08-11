@@ -311,7 +311,7 @@ func (router *Router) ServeTempl(pageMap map[string]*TemplPage) {
 
 func getPath(path string, method string) templ.Attributes {
 	tag := "hx-" + strings.ToLower(method)
-	return templ.Attributes{tag: path}
+	return templ.Attributes{tag: strings.Split(path, " ")[1]}
 }
 
 // TODO: Brainstorm path to pass args
