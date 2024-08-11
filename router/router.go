@@ -327,11 +327,10 @@ type TemplCb struct {
 }
 
 func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attributes {
-	htmxAttr := getPath("/"+router.Path+handler.Path, method)
+	route := router.CreateRoute(handler.Path, method)
+	htmxAttr := getPath(route, method)
 
 	fmt.Println("attr", htmxAttr)
-
-	route := router.CreateRoute(handler.Path, method)
 
 	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
