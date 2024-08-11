@@ -310,7 +310,8 @@ func (router *Router) ServeTempl(pageMap map[string]*TemplPage) {
 }
 
 func getPath(path string, method string) templ.Attributes {
-	return templ.Attributes{"hx-" + strings.ToLower(method): path}
+	tag := "hx-" + strings.ToLower(method)
+	return templ.Attributes{tag: path}
 }
 
 // TODO: Brainstorm path to pass args
@@ -327,6 +328,8 @@ type TemplCb struct {
 
 func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attributes {
 	htmxAttr := getPath(handler.Path, method)
+
+	fmt.Println("attr", htmxAttr)
 
 	route := router.CreateRoute(handler.Path, method)
 
