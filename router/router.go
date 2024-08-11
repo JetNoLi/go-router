@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/jetnoli/go-router/utils"
@@ -309,7 +310,7 @@ func (router *Router) ServeTempl(pageMap map[string]*TemplPage) {
 }
 
 func getPath(path string, method string) templ.Attributes {
-	return templ.Attributes{method: path}
+	return templ.Attributes{"hx-" + strings.ToLower(method): path}
 }
 
 // TODO: Brainstorm path to pass args
@@ -327,7 +328,7 @@ type TemplCb struct {
 func (router *Router) TemplHtmxCb(method string, handler TemplCb) templ.Attributes {
 	htmxAttr := getPath(handler.Path, method)
 
-	route := router.CreateRoute(handler.Path, "GET")
+	route := router.CreateRoute(handler.Path, method)
 
 	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
