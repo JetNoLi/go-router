@@ -12,13 +12,13 @@ type UserJwt struct {
 	ExpiresAt string
 }
 
-var secret = []byte("MY_JWT_SECRET")
+var secret = []byte("MY_JWT_SECRET") // Replace with your desired secret
 
 func GenerateJwt(userId string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": userId,                           // Subject (user identifier)
-		"iss":    "notion-voice-assistant",         // Issuer
+		"userId": userId,
+		"iss":    "notion-voice-assistant",         // Replace with App Name
 		"exp":    time.Now().Add(time.Hour).Unix(), // Expiration time
 		"iat":    time.Now().Unix(),                // Issued at
 	})
