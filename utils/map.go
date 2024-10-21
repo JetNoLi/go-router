@@ -1,5 +1,6 @@
 package utils
 
+// TODO: Deprecated with next go version
 // On error returns index of value which caused error
 // If no error int return value == -1
 func Map[R any, I any](values []I, fn func(I) (R, error)) ([]R, int, error) {
