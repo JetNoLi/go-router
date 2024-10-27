@@ -131,6 +131,10 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		return err
 	}
 
+	if path[0] == '.' {
+		path = path[1:]
+	}
+
 	for _, file := range dir {
 
 		fileName := file.Name()
