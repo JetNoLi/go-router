@@ -202,7 +202,17 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap) error {
 
-	child, ok := (*compMap)[childPath]
+	// child, ok := (*compMap)[childPath]
+
+	ok := false
+	child := ComponentAsset{}
+
+	for path, compAsset := range *compMap {
+		if strings.Contains(path, childPath) || strings.Contains(childPath, path) {
+			child = compAsset
+			ok = true
+		}
+	}
 
 	if !ok {
 		fmt.Println("error map", childPath, compMap)
