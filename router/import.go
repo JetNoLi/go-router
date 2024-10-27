@@ -208,6 +208,20 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	child := ComponentAsset{}
 
 	for path, compAsset := range *compMap {
+		splitPath := strings.Split(path, "/")
+
+		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+			index := strings.Index(path, splitPath[len(splitPath)-1])
+			path = path[:index-1]
+		}
+
+		splitPath = strings.Split(childPath, ".")
+
+		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+			index := strings.Index(path, splitPath[len(splitPath)-1])
+			childPath = childPath[:index-1]
+		}
+
 		if strings.Contains(path, childPath) || strings.Contains(childPath, path) {
 			child = compAsset
 			ok = true
