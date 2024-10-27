@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/jetnoli/go-router/app/view/pages/home"
 )
 
 // TODO: Pass component map in ctx
@@ -64,7 +63,7 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		err = Render(w, r, home.Index(), assetMap)
+		err = Render(w, r, comp, assetMap)
 
 		if err != nil {
 			http.Error(w, "error serving page "+err.Error(), http.StatusInternalServerError)
