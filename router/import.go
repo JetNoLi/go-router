@@ -8,9 +8,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strings"
-
-	"github.com/a-h/templ"
 )
 
 type Asset struct {
@@ -67,8 +66,11 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		//TODO: Cater for multi line import syntax
 		if strings.Contains(line, "import") {
 			if strings.Contains(line, "components") {
-				path := strings.Split(line, " ")[1]
-				children = append(children, path)
+				childPath := strings.Split(line, " ")[1]
+				children = append(children, childPath)
+			} else if strings.Contains(line, "css") {
+				styleSheetPath := strings.Split(line, " ")[2]
+				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css"})
 			}
 
 			continue
@@ -122,11 +124,11 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 // .css - styles
 // .js - script
 // other -> in asset directory -> .includes assets
-func RegisterAssets(path string, recursive bool, compMap ComponentMap) (ComponentMap, error) {
+func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap *AssetMap) error {
 	dir, err := os.ReadDir(path)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	for _, file := range dir {
@@ -139,10 +141,10 @@ func RegisterAssets(path string, recursive bool, compMap ComponentMap) (Componen
 				continue
 			}
 
-			compMap, err = RegisterAssets(fullPath, true, compMap)
+			err = RegisterAssets(fullPath, true, compMap, assetMap)
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			continue
@@ -151,18 +153,37 @@ func RegisterAssets(path string, recursive bool, compMap ComponentMap) (Componen
 		splitFileStr := strings.Split(fileName, ".")
 		fileType := splitFileStr[1]
 
+		_, exists := (*compMap)[fullPath]
+
+		if exists {
+			continue
+		}
+
+		_, exists = (*assetMap)[fullPath]
+
+		if exists {
+			continue
+		}
+
 		if fileType == "templ" {
 			compAsset, err := ParsePageContents(fullPath)
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
-			compMap[fullPath] = *compAsset
+			(*compMap)[fullPath] = *compAsset
+			//TODO: Make constant
+		} else if slices.Contains([]string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}, fileType) {
+
+			(*assetMap)[fullPath] = Asset{
+				Path: fullPath,
+				Typ:  fileType,
+			}
 		}
 	}
 
-	return compMap, nil
+	return nil
 }
 
 func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap) error {
@@ -193,11 +214,11 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 }
 
 // Create a function to read map and create head for page
-func CreatePageHead(compMap *ComponentMap, path string) (templ.Component, error) {
+func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 	compAsset := (*compMap)[path]
 
 	if !compAsset.isPage {
-		fmt.Println("failing map", compMap)
+		fmt.Println("failing map", compAsset, "path is ", path)
 		return nil, fmt.Errorf("component at path %s is not a page", path)
 	}
 
@@ -211,14 +232,57 @@ func CreatePageHead(compMap *ComponentMap, path string) (templ.Component, error)
 		}
 	}
 
-	return PageHead(assetMap), nil
+	for _, asset := range compAsset.assets {
+		assetMap[asset.Path] = asset
+	}
+
+	return assetMap, nil
 }
 
-func LoadImports(rootDir string) ComponentMap {
-	compMap, err := RegisterAssets(rootDir, true, make(ComponentMap))
+func LoadImports(rootDir string, r Router) ComponentMap {
+	compMap := make(ComponentMap)
+	assetMap := make(AssetMap)
+
+	err := RegisterAssets(rootDir, true, &compMap, &assetMap)
 
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	componentsPath := "/components/"
+	pagesPath := "/pages/"
+	// viewPath := "/view/"
+	assetsPath := "/assets/"
+
+	// fmt.Println("asset map", assetMap)
+
+	//TODO: Register all asset paths
+	for _, asset := range assetMap {
+		assetIndex := strings.Index(asset.Path, assetsPath)
+		componentIndex := strings.Index(asset.Path, componentsPath)
+		pageIndex := strings.Index(asset.Path, pagesPath)
+
+		assetUrl := ""
+
+		if assetIndex != -1 {
+			assetUrl = asset.Path[assetIndex:]
+		}
+
+		if componentIndex != -1 {
+			assetUrl = asset.Path[componentIndex+len(componentsPath):]
+		}
+
+		if pageIndex != -1 {
+			assetUrl = asset.Path[pageIndex+len(pagesPath):]
+		}
+
+		if assetUrl == "" {
+			log.Fatal("could not generate asset url for: ", asset)
+		}
+
+		// fmt.Println("serving ", asset.Path, " on ", assetUrl)
+
+		r.Serve(assetUrl, asset.Path, &RouteOptions{})
 	}
 
 	return compMap

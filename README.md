@@ -17,7 +17,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 // Create Base Router to be Used as Server
-router := Router.CreateRouter("*", Router.RouterOptions{
+router := Router.CreateRouter("/", Router.RouterOptions{
     // Attach Middleware if Required
 	PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 })

@@ -21,3 +21,9 @@
 go.work
 go.work.sum
 *vendor
+
+# Test app directory
+app
+
+# Templ
+tmp

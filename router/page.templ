@@ -1,13 +1,66 @@
 package router
 
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func prepareLink(link string) string {
+	i := strings.Index(link, "pages/")
+
+	if i == -1 {
+		// TODO: Error
+		return ""
+	}
+
+	return link[i+6:]
+}
+
 templ PageHead(assets AssetMap) {
 	<head>
 		for _, asset := range assets {
 			if asset.Typ == "css" {
-				<link type="text/css" rel="stylesheet" href="/page/page.css"/>
+				<link type="text/css" rel="stylesheet" href={ prepareLink(asset.Path) }/>
 			} else if asset.Typ == "js" {
-				<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
+				<script src={ prepareLink(asset.Path) }></script>
 			}
 		}
 	</head>
+}
+
+templ Empty() {
+}
+
+func optional(comp *templ.Component) templ.Component {
+	if comp != nil {
+		return *comp
+	}
+
+	return Empty()
+}
+
+templ Page(title string, comp *templ.Component, assets AssetMap) {
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>
+				{ title }
+			</title>
+			<script src="../assets/htmx/index.js"></script>
+			<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+			<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
+			// TODO: Improvement store assets in request config
+			@PageHead(assets)
+		</head>
+		<body>
+			@optional(comp)
+		</body>
+	</html>
+}
+
+func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap) error {
+	fmt.Println("passed to page", assets)
+	return Page("title", &comp, assets).Render(r.Context(), w)
 }
