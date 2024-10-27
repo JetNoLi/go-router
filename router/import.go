@@ -159,6 +159,14 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		fileType := splitFileStr[1]
 
+		if fullPath[0] == '.' {
+			fullPath = fullPath[1:]
+		}
+
+		if fullPath[0] == '/' {
+			fullPath = fullPath[1:]
+		}
+
 		_, exists := (*compMap)[fullPath]
 
 		if exists {
@@ -169,14 +177,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		if exists {
 			continue
-		}
-
-		if fullPath[0] == '.' {
-			fullPath = fullPath[1:]
-		}
-
-		if fullPath[len(fullPath)-1] == '/' {
-			fullPath = fullPath[:len(fullPath)-1]
 		}
 
 		if fileType == "templ" {
