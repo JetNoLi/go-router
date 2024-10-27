@@ -1,0 +1,13 @@
+package router
+
+templ PageHead(assets AssetMap) {
+	<head>
+		for _, asset := range assets {
+			if asset.Typ == "css" {
+				<link type="text/css" rel="stylesheet" href="/page/page.css"/>
+			} else if asset.Typ == "js" {
+				<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
+			}
+		}
+	</head>
+}
