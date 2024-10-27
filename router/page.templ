@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -61,6 +60,5 @@ templ Page(title string, comp *templ.Component, assets AssetMap) {
 }
 
 func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap) error {
-	fmt.Println("passed to page", assets)
 	return Page("title", &comp, assets).Render(r.Context(), w)
 }

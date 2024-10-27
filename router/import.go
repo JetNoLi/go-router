@@ -239,6 +239,7 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 	return assetMap, nil
 }
 
+// Uses compononents, pages and assets path to load required imports
 func LoadImports(rootDir string, r Router) ComponentMap {
 	compMap := make(ComponentMap)
 	assetMap := make(AssetMap)
@@ -251,12 +252,8 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 
 	componentsPath := "/components/"
 	pagesPath := "/pages/"
-	// viewPath := "/view/"
 	assetsPath := "/assets/"
 
-	// fmt.Println("asset map", assetMap)
-
-	//TODO: Register all asset paths
 	for _, asset := range assetMap {
 		assetIndex := strings.Index(asset.Path, assetsPath)
 		componentIndex := strings.Index(asset.Path, componentsPath)
@@ -279,8 +276,6 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 		if assetUrl == "" {
 			log.Fatal("could not generate asset url for: ", asset)
 		}
-
-		// fmt.Println("serving ", asset.Path, " on ", assetUrl)
 
 		r.Serve(assetUrl, asset.Path, &RouteOptions{})
 	}

@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/a-h/templ"
 	"github.com/jetnoli/go-router/utils"
 )
 
@@ -263,53 +262,4 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 
 		router.Serve(route, filePath, &RouteOptions{})
 	}
-}
-
-// Non Lib Specific
-type TemplPageHandler struct {
-	Service *http.HandlerFunc
-	Path    string
-	Method  string
-}
-
-type TemplPage struct {
-	PageComponent templ.Component
-	Options       *RouteOptions
-	Handlers      []TemplPageHandler
-}
-
-func (router Router) ServeTempl(pageMap map[string]*TemplPage) {
-	for route, page := range pageMap {
-		for _, handler := range page.Handlers {
-			switch handler.Method {
-			case "post":
-				{
-					router.Post(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "put":
-				{
-					router.Put(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "get":
-				{
-					router.Get(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "delete":
-				{
-					router.Delete(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			}
-		}
-
-		router.Get(route, func(w http.ResponseWriter, r *http.Request) {
-			err := page.PageComponent.Render(r.Context(), w)
-
-			if err != nil {
-				http.Error(w, "error serving page "+err.Error(), http.StatusInternalServerError)
-			}
-
-		}, page.Options)
-
-	}
-
 }
