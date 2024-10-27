@@ -175,6 +175,10 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			fullPath = fullPath[1:]
 		}
 
+		if fullPath[len(fullPath)-1] == '/' {
+			fullPath = fullPath[:len(fullPath)-1]
+		}
+
 		if fileType == "templ" {
 			compAsset, err := ParsePageContents(fullPath)
 
