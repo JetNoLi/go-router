@@ -62,6 +62,8 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 		return fmt.Errorf("error creating page header content from asset map " + err.Error())
 	}
 
+	fmt.Println("map a", assetMap)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		err = Render(w, r, comp, assetMap)
 

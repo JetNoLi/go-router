@@ -36,6 +36,10 @@ func AppendPath(basePath string, path string) string {
 	return basePath + "/" + path
 }
 
+var componentsPath = "components/"
+var pagesPath = "pages/"
+var assetsPath = "assets/"
+
 // Converts base path to actual path
 func Import(path string) {
 
@@ -288,10 +292,6 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 		log.Fatal(err.Error())
 		os.Exit(1)
 	}
-
-	componentsPath := "components/"
-	pagesPath := "pages/"
-	assetsPath := "assets/"
 
 	for _, asset := range assetMap {
 		assetIndex := strings.Index(asset.Path, assetsPath)

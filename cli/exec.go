@@ -118,7 +118,7 @@ func main() {
 	// 	os.Exit(1)
 	// }
 
-	cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@97f3210c5fd30140847a5b64b9e3eceb39f73d83")
+	cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@98df071dba70df24c762606e24cff79bce8bca87")
 	cmd.Dir = projectName
 
 	output, err = cmd.CombinedOutput()

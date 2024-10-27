@@ -9,19 +9,26 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 )
 
 func prepareLink(link string) string {
-	i := strings.Index(link, "pages/")
+	i := strings.Index(link, pagesPath)
+	pathType := pagesPath
 
 	if i == -1 {
-		// TODO: Error
-		return ""
+		i = strings.Index(link, assetsPath)
+
+		if i == -1 {
+			fmt.Printf("issue rendering link %s", link)
+		}
+
+		return link
 	}
 
-	return link[i+6:]
+	return link[i+len(pathType):]
 }
 
 func PageHead(assets AssetMap) templ.Component {
@@ -55,7 +62,7 @@ func PageHead(assets AssetMap) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 23, Col: 73}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 30, Col: 73}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -73,7 +80,7 @@ func PageHead(assets AssetMap) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 25, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 32, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -148,13 +155,13 @@ func Page(title string, comp *templ.Component, assets AssetMap) templ.Component 
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 48, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 55, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script src=\"../assets/htmx/index.js\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/json-enc.js\"></script><script src=\"https://kit.fontawesome.com/713dcfea64.js\" crossorigin=\"anonymous\"></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script src=\"/assets/scripts/htmx.js\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/json-enc.js\"></script><script src=\"https://kit.fontawesome.com/713dcfea64.js\" crossorigin=\"anonymous\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

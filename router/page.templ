@@ -1,19 +1,26 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 )
 
 func prepareLink(link string) string {
-	i := strings.Index(link, "pages/")
+	i := strings.Index(link, pagesPath)
+	pathType := pagesPath
 
 	if i == -1 {
-		// TODO: Error
-		return ""
+		i = strings.Index(link, assetsPath)
+
+		if i == -1 {
+			fmt.Printf("issue rendering link %s", link)
+		}
+
+		return link
 	}
 
-	return link[i+6:]
+	return link[i+len(pathType):]
 }
 
 templ PageHead(assets AssetMap) {
@@ -47,7 +54,7 @@ templ Page(title string, comp *templ.Component, assets AssetMap) {
 			<title>
 				{ title }
 			</title>
-			<script src="../assets/htmx/index.js"></script>
+			<script src="/assets/scripts/htmx.js"></script>
 			<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 			<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
 			// TODO: Improvement store assets in request config
