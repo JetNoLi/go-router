@@ -265,9 +265,9 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 		os.Exit(1)
 	}
 
-	componentsPath := "/components/"
-	pagesPath := "/pages/"
-	assetsPath := "/assets/"
+	componentsPath := "components/"
+	pagesPath := "pages/"
+	assetsPath := "assets/"
 
 	for _, asset := range assetMap {
 		assetIndex := strings.Index(asset.Path, assetsPath)
