@@ -151,6 +151,12 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		}
 
 		splitFileStr := strings.Split(fileName, ".")
+
+		if len(splitFileStr) < 2 {
+			fmt.Errorf("invalid file %s", fileName)
+			os.Exit(1)
+		}
+
 		fileType := splitFileStr[1]
 
 		_, exists := (*compMap)[fullPath]
