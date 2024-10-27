@@ -131,10 +131,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		return err
 	}
 
-	if path[0] == '.' {
-		path = path[1:]
-	}
-
 	for _, file := range dir {
 
 		fileName := file.Name()
@@ -173,6 +169,10 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		if exists {
 			continue
+		}
+
+		if fullPath[0] == '.' {
+			fullPath = fullPath[1:]
 		}
 
 		if fileType == "templ" {
