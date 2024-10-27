@@ -1,0 +1,7 @@
+*/tmp/*
+tmp/
+.env
+venv
+**_templ.go
+**_templ.txt
+*.DS_STORE
