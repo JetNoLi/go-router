@@ -61,13 +61,6 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 			continue
 		}
 
-		// file, err := os.Open(path + "/" + file.Name())
-		// if err != nil {
-		// 	log.Fatalf("failed to open file: %s", err)
-		// }
-		// defer file.Close()
-
-		// scanner := bufio.NewScanner(file)
 		content, err := os.ReadFile(fileName)
 
 		if err != nil {
@@ -125,14 +118,14 @@ func main() {
 	// 	os.Exit(1)
 	// }
 
-	// cmd = exec.Command("go", "get", "github.com/jetnoli/go-router")
-	// cmd.Dir = projectName
+	cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@97f3210c5fd30140847a5b64b9e3eceb39f73d83")
+	cmd.Dir = projectName
 
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// 	os.Exit(1)
-	// }
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("Error running command: %v\nOutput: %s", err, output)
+		os.Exit(1)
+	}
 
 	err = replaceModuleName(projectName, moduleName, projectName)
 

@@ -19,10 +19,10 @@ func main() {
 		// PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 	})
 
-	componentMap := router.LoadImports("app/", *r)
+	compMap := router.LoadImports("./", *r)
 
-	r.Handle("/", routes.HealthRouter())
-	r.Handle("/", routes.PageRouter(&componentMap))
+	// r.Handle("/", routes.HealthRouter())
+	r.Handle("/", routes.PageRouter(&compMap))
 
 	// Define Server with Standard Http Library
 	server := http.Server{

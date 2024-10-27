@@ -191,7 +191,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	child, ok := (*compMap)[childPath]
 
 	if !ok {
-		fmt.Println("error map", compMap)
+		fmt.Println("error map", childPath, compMap)
 		return fmt.Errorf("child does not exist in component map %s", childPath)
 	}
 
@@ -248,6 +248,7 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 
 	if err != nil {
 		log.Fatal(err.Error())
+		os.Exit(1)
 	}
 
 	componentsPath := "/components/"
@@ -275,6 +276,7 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 
 		if assetUrl == "" {
 			log.Fatal("could not generate asset url for: ", asset)
+			os.Exit(1)
 		}
 
 		r.Serve(assetUrl, asset.Path, &RouteOptions{})
