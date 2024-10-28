@@ -28,20 +28,6 @@ func CreateStructure() {
 
 }
 
-func initializeProject(name string) error {
-	cmd := exec.Command("go", "mod", "init", name)
-
-	// cmd.Dir = directory // Set the directory where you want to initialize the module
-
-	output, err := cmd.CombinedOutput()
-
-	if err != nil {
-		return fmt.Errorf("failed to initialize module: %w. Output: %s", err, string(output))
-	}
-
-	return nil
-}
-
 func replaceModuleName(projectName string, moduleName string, path string) error {
 	dir, err := os.ReadDir(path + "/")
 
@@ -123,7 +109,7 @@ func main() {
 	// 	os.Exit(1)
 	// }
 
-	cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@1d55e6943c782658afe35a87b04d9014dcc7199a")
+	cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@50a51c042d2af131b17fe07dfaf2ee926876707f")
 	cmd.Dir = projectName
 
 	output, err = cmd.CombinedOutput()
@@ -133,6 +119,11 @@ func main() {
 	}
 
 	err = replaceModuleName(projectName, moduleName, projectName)
+
+	if err != nil {
+		log.Fatalf("Error replacing module name %s, %s", projectName, moduleName)
+		os.Exit(1)
+	}
 
 	fmt.Println("replaced moduels")
 
