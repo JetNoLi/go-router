@@ -21,7 +21,7 @@ func main() {
 
 	compMap := router.LoadImports("./", *r)
 
-	// r.Handle("/", routes.HealthRouter())
+	r.Handle("/health", routes.HealthRouter())
 	r.Handle("/", routes.PageRouter(&compMap))
 
 	// Define Server with Standard Http Library

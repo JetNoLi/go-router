@@ -39,6 +39,8 @@ func AppendPath(basePath string, path string) string {
 var componentsPath = "components/"
 var pagesPath = "pages/"
 var assetsPath = "assets/"
+var SupportedAssetTypes = []string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}
+var TemplateFileType = "templ"
 
 // Converts base path to actual path
 func Import(path string) {
@@ -135,11 +137,14 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		return err
 	}
 
+	// fmt.Println("read dir", dir)
+
 	for _, file := range dir {
 
 		fileName := file.Name()
 		fullPath := AppendPath(path, fileName)
 
+		fmt.Println("file is okay", fileName, fullPath)
 		if file.IsDir() {
 			if !recursive {
 				continue
@@ -156,12 +161,23 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		splitFileStr := strings.Split(fileName, ".")
 
+		fmt.Println(splitFileStr, len(splitFileStr))
+
 		if len(splitFileStr) < 2 {
-			fmt.Errorf("invalid file %s", fileName)
-			os.Exit(1)
+			continue
+			// return fmt.Errorf("invalid file %s", fileName)
 		}
 
 		fileType := splitFileStr[1]
+
+		if !slices.Contains(SupportedAssetTypes, fileType) && fileType != "templ" {
+			fmt.Println("continue", fileName)
+			continue
+		}
+
+		fmt.Println(splitFileStr, len(splitFileStr))
+
+		// TODO: Note, certain files have . at the front
 
 		if fullPath[0] == '.' {
 			fullPath = fullPath[1:]
@@ -285,6 +301,8 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 func LoadImports(rootDir string, r Router) ComponentMap {
 	compMap := make(ComponentMap)
 	assetMap := make(AssetMap)
+
+	fmt.Println("initial asset registration")
 
 	err := RegisterAssets(rootDir, true, &compMap, &assetMap)
 
