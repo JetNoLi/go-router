@@ -105,7 +105,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmd = exec.Command("cp", "-r", "cli/static/", projectName)
+	cmd = exec.Command("cp", "-r", "grc/static/", projectName)
 	// cmd.Dir = projectName
 
 	output, err = cmd.CombinedOutput()
