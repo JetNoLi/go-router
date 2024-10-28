@@ -71,12 +71,17 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		// Handle Imports
 		//TODO: Cater for multi line import syntax
 		if strings.Contains(line, "import") {
-			if strings.Contains(line, "components") {
-				childPath := strings.Split(line, " ")[1]
-				children = append(children, childPath)
-			} else if strings.Contains(line, "css") {
-				styleSheetPath := strings.Split(line, " ")[2]
+			if strings.Contains(line, "css") {
+				styleSheetPath := strings.Split(line, " ")[1]
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css"})
+			} else if strings.Contains(line, "components") {
+				childPath := strings.Split(line, " ")[1]
+				componentIndex := strings.Index(childPath, componentsPath)
+
+				if componentIndex == -1 {
+					return nil, fmt.Errorf("invalid path for component %s %s", childPath, line)
+				}
+				children = append(children, childPath)
 			}
 
 			continue
@@ -178,6 +183,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		fmt.Println(splitFileStr, len(splitFileStr))
 
 		// TODO: Note, certain files have . at the front
+		// TODO: Need to remove github.com from component path
 
 		if fullPath[0] == '.' {
 			fullPath = fullPath[1:]
@@ -206,7 +212,9 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 				return err
 			}
 
-			(*compMap)[fullPath] = *compAsset
+			index := strings.Index(fullPath, fileName)
+
+			(*compMap)[fullPath[:index-1]] = *compAsset
 			//TODO: Make constant
 		} else if slices.Contains([]string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}, fileType) {
 
@@ -254,6 +262,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	}
 
 	for _, nestedChildPath := range child.children {
+		fmt.Println("getting child assets", nestedChildPath, child)
 		err := GetChildAssets(compMap, nestedChildPath, assetMap)
 
 		if err != nil {

@@ -20,12 +20,23 @@ func prepareLink(link string) string {
 
 	if i == -1 {
 		i = strings.Index(link, assetsPath)
+		pathType = assetsPath
 
 		if i == -1 {
-			fmt.Printf("issue rendering link %s", link)
+
+			i = strings.Index(link, componentsPath)
+			pathType = componentsPath
+
+			if i == -1 {
+				fmt.Printf("issue rendering link %s", link)
+				return link
+			}
 		}
 
-		return link
+	}
+
+	if pathType == assetsPath {
+		return link[i:]
 	}
 
 	return link[i+len(pathType):]
@@ -62,7 +73,7 @@ func PageHead(assets AssetMap) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 30, Col: 73}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 41, Col: 73}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -80,7 +91,7 @@ func PageHead(assets AssetMap) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 32, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 43, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -155,7 +166,7 @@ func Page(title string, comp *templ.Component, assets AssetMap) templ.Component 
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 55, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 66, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
