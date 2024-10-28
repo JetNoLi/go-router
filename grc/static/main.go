@@ -13,13 +13,19 @@ import (
 
 func main() {
 
+	fmt.Println("creating router")
+
 	// Create Base Router to be Used as Server
 	r := router.CreateRouter("/", router.RouterOptions{
 		// Attach Middleware if Required
 		// PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 	})
 
+	fmt.Println("router created")
+
 	compMap := router.LoadImports("./", *r)
+
+	fmt.Println("assets loaded")
 
 	r.Handle("/health", routes.HealthRouter())
 	r.Handle("/", routes.PageRouter(&compMap))

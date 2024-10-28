@@ -137,7 +137,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		return err
 	}
 
-	// fmt.Println("read dir", dir)
+	fmt.Println("read dir", dir)
 
 	for _, file := range dir {
 
