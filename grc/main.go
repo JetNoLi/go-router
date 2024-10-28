@@ -78,18 +78,23 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 
 func main() {
 
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide arguments")
+	if len(os.Args) < 3 {
+		fmt.Println("format is: grc create module_name")
 		return
 	}
 
 	// Access specific arguments
-	moduleName := os.Args[1]
+	moduleName := os.Args[2]
 	projectName := strings.Split(moduleName, "/")[len(strings.Split(moduleName, "/"))-1]
 	// fmt.Println("First argument:", firstArg)
 
 	// Go mod Init
 	err := os.Mkdir(projectName, os.ModePerm)
+
+	if err != nil {
+		log.Fatalf("Error running command: %v", err)
+		os.Exit(1)
+	}
 
 	cmd := exec.Command("go", "mod", "init", moduleName)
 	cmd.Dir = projectName // Set the directory where you want to initialize the module
