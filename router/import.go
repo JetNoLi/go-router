@@ -167,7 +167,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			fullPath = fullPath[1:]
 		}
 
-		if fullPath[0] == '/' {
+		if fullPath[0] == '/' && len(fullPath) > 1 {
 			fullPath = fullPath[1:]
 		}
 
@@ -289,7 +289,7 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 	err := RegisterAssets(rootDir, true, &compMap, &assetMap)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("error registering assets", err.Error())
 		os.Exit(1)
 	}
 
