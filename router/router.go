@@ -16,6 +16,7 @@ import (
 // TODO: Create custom Interface for Req, Res (ctx ?)
 // TODO: Add Request ID
 // TODO: Add in api version flow to router?
+// TODO: Add in doc comments
 
 func ReadData(path string) (data []byte, err error) {
 	absPath, err := filepath.Abs(path)
@@ -24,12 +25,8 @@ func ReadData(path string) (data []byte, err error) {
 		return data, err
 	}
 
-	data, err = os.ReadFile(absPath)
-
-	return data, err
+	return os.ReadFile(absPath)
 }
-
-// END
 
 type RouterOptions struct {
 	ExactPathsOnly        bool // Appends the {$} for all paths in router
@@ -119,7 +116,6 @@ func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Reque
 	}
 
 	for _, middleware := range preHandlerMiddleware {
-		// fmt.Printf("middleware applied %s", utils.GetFunctionName(middleware))
 		middleware(w, r)
 
 		if r.Context().Err() != nil {

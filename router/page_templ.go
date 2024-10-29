@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-func prepareLink(link string) string {
+func PrepareLink(link string) string {
 	i := strings.Index(link, pagesPath)
 	pathType := pagesPath
 
@@ -71,7 +71,7 @@ func PageHead(assets AssetMap) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(PrepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 41, Col: 73}
 				}
@@ -89,7 +89,7 @@ func PageHead(assets AssetMap) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
-				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(prepareLink(asset.Path))
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(PrepareLink(asset.Path))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 43, Col: 41}
 				}

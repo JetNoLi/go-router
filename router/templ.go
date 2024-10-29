@@ -9,8 +9,7 @@ import (
 )
 
 // TODO: Pass component map in ctx
-// TODO: Allow a way to pass in any data the component may need?
-// Mapybe should be a ServeTemplHandler Option?
+// TODO: Allow a way to pass in any data the component may need, i.e. server rendering
 func (r Router) ServeTempl(route string, comp templ.Component, compMap *ComponentMap) error {
 
 	// assumption: route contains page name
@@ -18,13 +17,14 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	localPathName := routeSplit[len(routeSplit)-1]
 	routeSplitLen := len(routeSplit)
 
-	// check if route param
+	// default / path to home component
+	// todo: allow for override
 	if route == "/" {
 		localPathName = "home"
 	}
 
+	// check for route params, defined by {}, e.g. /user/{id}
 	if localPathName != "home" {
-
 		for i := 1; i < routeSplitLen; i++ {
 			path := routeSplit[routeSplitLen-i]
 
@@ -39,6 +39,7 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 		}
 	}
 
+	// TODO: find a better flow here
 	localPath := ""
 
 	for compPath, compAsset := range *compMap {
@@ -61,8 +62,6 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	if err != nil {
 		return fmt.Errorf("error creating page header content from asset map " + err.Error())
 	}
-
-	fmt.Println("map a", assetMap)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		err = Render(w, r, comp, assetMap)

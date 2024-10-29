@@ -9,13 +9,18 @@ import (
 	"strings"
 )
 
-type CmdHandler = func(flags map[string]string)
+type CmdHandler = func()
 
 const DEBUG = true
 
 var CMDS = map[string]CmdHandler{
 	"create": createProject,
 }
+
+// Flags
+
+// go router version commit version to be used
+var GRCV = flag.String("cv", "", "commit version to use for go router installation")
 
 // The static content has the incorrect import paths, this function is
 // used to replace all occurences with the module name
@@ -77,7 +82,7 @@ func execOrExit(cmdStr string, dir string) string {
 	return string(output)
 }
 
-func createProject(flags map[string]string) {
+func createProject() {
 	moduleName := flag.Arg(1)
 
 	if moduleName == "" {
@@ -104,10 +109,8 @@ func createProject(flags map[string]string) {
 
 	cmd = "go get github.com/jetnoli/go-router"
 
-	goRouterVersion := flags["goRouterVersion"]
-
-	if goRouterVersion != "" {
-		cmd += fmt.Sprintf("@%s", goRouterVersion)
+	if *GRCV != "" {
+		cmd += fmt.Sprintf("@%s", *GRCV)
 	}
 
 	execOrExit(cmd, projectName)
@@ -124,15 +127,7 @@ func createProject(flags map[string]string) {
 }
 
 func main() {
-
-	goRouterVersion := flag.String("cv", "", "commit version to use for go router installation")
-
 	flag.Parse()
-
-	flagMap := map[string]string{
-		"goRouterVersion": *goRouterVersion,
-	}
-
 	cmd := flag.Arg(0)
 
 	if cmd == "" {
@@ -151,7 +146,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	process(flagMap)
+	process()
 
 	fmt.Println("Project Created Successfully!")
 }

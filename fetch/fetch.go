@@ -22,7 +22,7 @@ type ApiPostRequestOptions struct {
 	Headers map[string]string
 }
 
-// TODO: Add missing Options
+// TODO: Add missing request types - put, patch, delete
 // TODO: Add Version of Request With Json Decoding BuiltIn - GetJson etc..
 func (client Api) Get(url string, options ApiGetRequestOptions) (*http.Response, error) {
 	req, err := http.NewRequest("GET", client.BaseUrl+url, nil)

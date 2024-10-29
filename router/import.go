@@ -6,7 +6,6 @@ package router
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"slices"
 	"strings"
@@ -24,6 +23,9 @@ type ComponentAsset struct {
 	assets   []Asset
 }
 
+// Combine 2 url paths, removing the trailing / and catering for overlapping /s
+// for example
+// /base/ + /append/ = /base/append
 func AppendPath(basePath string, path string) string {
 	if path[len(path)-1] == '/' {
 		path = path[:len(path)-1]
@@ -41,11 +43,6 @@ var pagesPath = "pages/"
 var assetsPath = "assets/"
 var SupportedAssetTypes = []string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}
 var TemplateFileType = "templ"
-
-// Converts base path to actual path
-func Import(path string) {
-
-}
 
 type ComponentMap = map[string]ComponentAsset
 type AssetMap = map[string]Asset
@@ -142,14 +139,11 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		return err
 	}
 
-	fmt.Println("read dir", dir)
-
 	for _, file := range dir {
 
 		fileName := file.Name()
 		fullPath := AppendPath(path, fileName)
 
-		fmt.Println("file is okay", fileName, fullPath)
 		if file.IsDir() {
 			if !recursive {
 				continue
@@ -166,17 +160,13 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		splitFileStr := strings.Split(fileName, ".")
 
-		fmt.Println(splitFileStr, len(splitFileStr))
-
 		if len(splitFileStr) < 2 {
 			continue
-			// return fmt.Errorf("invalid file %s", fileName)
 		}
 
 		fileType := splitFileStr[1]
 
 		if !slices.Contains(SupportedAssetTypes, fileType) && fileType != "templ" {
-			fmt.Println("continue", fileName)
 			continue
 		}
 
@@ -215,8 +205,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			index := strings.Index(fullPath, fileName)
 
 			(*compMap)[fullPath[:index-1]] = *compAsset
-			//TODO: Make constant
-		} else if slices.Contains([]string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}, fileType) {
+		} else if slices.Contains(SupportedAssetTypes, fileType) {
 
 			(*assetMap)[fullPath] = Asset{
 				Path: fullPath,
@@ -229,9 +218,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 }
 
 func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap) error {
-
-	// child, ok := (*compMap)[childPath]
-
 	ok := false
 	child := ComponentAsset{}
 
@@ -311,12 +297,9 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 	compMap := make(ComponentMap)
 	assetMap := make(AssetMap)
 
-	fmt.Println("initial asset registration")
-
 	err := RegisterAssets(rootDir, true, &compMap, &assetMap)
 
 	if err != nil {
-		log.Fatal("error registering assets", err.Error())
 		os.Exit(1)
 	}
 
@@ -340,7 +323,6 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 		}
 
 		if assetUrl == "" {
-			log.Fatal("could not generate asset url for: ", asset)
 			os.Exit(1)
 		}
 
