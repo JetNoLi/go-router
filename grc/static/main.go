@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"{module_name}/routes"
+	"github.com/jetnoli/go-router/grc/static/routes"
 
 	"github.com/jetnoli/go-router/router"
 )

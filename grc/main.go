@@ -101,36 +101,13 @@ func main() {
 		log.Fatalf("Error running command: %v", err)
 	}
 
-	// cmd := exec.Command("go", "mod", "init", moduleName)
-	// cmd.Dir = projectName
-
 	cmd := fmt.Sprintf("go mod init %s", moduleName)
 	execOrExit(cmd, projectName)
-
-	// output, err := cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// }
 
 	cmd = fmt.Sprintf("cp -r grc/static/ %s", projectName)
 	execOrExit(cmd, "")
 
-	// cmd = exec.Command("cp", "-r", "grc/static/", projectName)
-
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// }
-
 	execOrExit("go get github.com/a-h/templ", projectName)
-
-	// cmd = exec.Command("go", "get", "github.com/a-h/templ")
-	// cmd.Dir = projectName
-
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// }
 
 	cmd = "go get github.com/jetnoli/go-router"
 
@@ -139,13 +116,6 @@ func main() {
 	}
 
 	execOrExit(cmd, projectName)
-	// cmd = exec.Command("go", "get", "github.com/jetnoli/go-router@4d34c2583bfbade712b4ec5953318cfaf6378b92")
-	// cmd.Dir = projectName
-
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// }
 
 	err = replaceModuleName(projectName, moduleName, projectName)
 
@@ -153,25 +123,9 @@ func main() {
 		log.Fatalf("Error replacing module name %s, %s", projectName, moduleName)
 	}
 
-	// cmd = exec.Command("templ", "generate")
-	// cmd.Dir = projectName
-
 	execOrExit("templ generate", projectName)
 
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// 	os.Exit(1)
-	// }
-
 	execOrExit("go mod tidy", projectName)
-	// cmd.Dir = projectName
-
-	// output, err = cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Fatalf("Error running command: %v\nOutput: %s", err, output)
-	// 	os.Exit(1)
-	// }
 
 	fmt.Println("Project Created Successfully!")
 }

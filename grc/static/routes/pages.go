@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"{module_name}/view/pages/home"
+	"github.com/jetnoli/go-router/grc/static/view/pages/home"
 
 	"github.com/jetnoli/go-router/router"
 )
