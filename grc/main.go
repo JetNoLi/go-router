@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -8,24 +9,16 @@ import (
 	"strings"
 )
 
+type CmdHandler = func(flags map[string]string)
+
 const DEBUG = true
 
-// 	handlers
-//  routes
-// 	assets
-//  css
-//		page.css
-// 	scripts
-//		htmx.js
-//  main.go
-// 	views
-//		pages
-//			home
-//		components
-// 			layout
+var CMDS = map[string]CmdHandler{
+	"create": createProject,
+}
 
-// The static content has the {module_name} placholder, this function is
-// used to replace all ocuurences of the placeholder with the module name
+// The static content has the incorrect import paths, this function is
+// used to replace all occurences with the module name
 func replaceModuleName(projectName string, moduleName string, path string) error {
 	dir, err := os.ReadDir(path + "/")
 
@@ -51,7 +44,7 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 			log.Fatalf("error reading file: %s", err)
 		}
 
-		updatedContent := strings.ReplaceAll(string(content), "{module_name}", moduleName)
+		updatedContent := strings.ReplaceAll(string(content), "github.com/jetnoli/go-router/grc/static", moduleName)
 
 		os.WriteFile(fileName, []byte(updatedContent), os.ModePerm)
 	}
@@ -59,6 +52,8 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 	return nil
 }
 
+// This function is used to execute commands with os.Exec
+// and return the output or call os.Exit(1) on failure
 func execOrExit(cmdStr string, dir string) string {
 	cmds := strings.Split(cmdStr, " ")
 
@@ -82,23 +77,21 @@ func execOrExit(cmdStr string, dir string) string {
 	return string(output)
 }
 
-func main() {
+func createProject(flags map[string]string) {
+	moduleName := flag.Arg(1)
 
-	if len(os.Args) < 3 {
-		fmt.Println("format is: grc create module_name")
-		return
+	if moduleName == "" {
+		log.Fatal("no module name provided")
 	}
 
-	moduleName := os.Args[2]
 	projectName := strings.Split(moduleName, "/")[len(strings.Split(moduleName, "/"))-1]
 
-	//TODO: ADD In CLI Flow
-	goRouterVersion := "4d34c2583bfbade712b4ec5953318cfaf6378b92"
+	fmt.Println(moduleName, projectName, flag.Args())
 
 	err := os.Mkdir(projectName, os.ModePerm)
 
 	if err != nil {
-		log.Fatalf("Error running command: %v", err)
+		log.Fatalf("error running command: %v", err)
 	}
 
 	cmd := fmt.Sprintf("go mod init %s", moduleName)
@@ -111,6 +104,8 @@ func main() {
 
 	cmd = "go get github.com/jetnoli/go-router"
 
+	goRouterVersion := flags["goRouterVersion"]
+
 	if goRouterVersion != "" {
 		cmd += fmt.Sprintf("@%s", goRouterVersion)
 	}
@@ -120,12 +115,43 @@ func main() {
 	err = replaceModuleName(projectName, moduleName, projectName)
 
 	if err != nil {
-		log.Fatalf("Error replacing module name %s, %s", projectName, moduleName)
+		log.Fatalf("error replacing module name %s, %s", projectName, moduleName)
 	}
 
 	execOrExit("templ generate", projectName)
 
 	execOrExit("go mod tidy", projectName)
+}
+
+func main() {
+
+	goRouterVersion := flag.String("cv", "", "commit version to use for go router installation")
+
+	flag.Parse()
+
+	flagMap := map[string]string{
+		"goRouterVersion": *goRouterVersion,
+	}
+
+	cmd := flag.Arg(0)
+
+	if cmd == "" {
+		log.Fatal("no cmd specified")
+	}
+
+	process, ok := CMDS[cmd]
+
+	if !ok {
+		fmt.Printf("invalid arg %s, allowed commands include:\n", cmd)
+
+		for key := range CMDS {
+			fmt.Printf("- %s\n", key)
+		}
+
+		os.Exit(1)
+	}
+
+	process(flagMap)
 
 	fmt.Println("Project Created Successfully!")
 }
