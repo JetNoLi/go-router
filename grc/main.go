@@ -91,21 +91,11 @@ func createProject() {
 
 	projectName := strings.Split(moduleName, "/")[len(strings.Split(moduleName, "/"))-1]
 
-	fmt.Println(moduleName, projectName, flag.Args())
+	cmd := fmt.Sprintf("bash create-repo.sh %s %s", projectName, moduleName)
 
-	err := os.Mkdir(projectName, os.ModePerm)
+	fmt.Println("command", cmd)
 
-	if err != nil {
-		log.Fatalf("error running command: %v", err)
-	}
-
-	cmd := fmt.Sprintf("go mod init %s", moduleName)
-	execOrExit(cmd, projectName)
-
-	cmd = fmt.Sprintf("cp -r grc/static/ %s", projectName)
 	execOrExit(cmd, "")
-
-	execOrExit("go get github.com/a-h/templ", projectName)
 
 	cmd = "go get github.com/jetnoli/go-router"
 
@@ -115,7 +105,7 @@ func createProject() {
 
 	execOrExit(cmd, projectName)
 
-	err = replaceModuleName(projectName, moduleName, projectName)
+	err := replaceModuleName(projectName, moduleName, projectName)
 
 	if err != nil {
 		log.Fatalf("error replacing module name %s, %s", projectName, moduleName)
