@@ -11,20 +11,9 @@ import (
 	"github.com/jetnoli/go-router/utils"
 )
 
-// TODO: REMOVE AND REPLACE WITH BUILT IN FUNC FROM HTTP LIB
 // TODO: Move types to their own files
 // TODO: Add Request ID
 // TODO: Add in doc comments
-
-func ReadData(path string) (data []byte, err error) {
-	absPath, err := filepath.Abs(path)
-
-	if err != nil {
-		return data, err
-	}
-
-	return os.ReadFile(absPath)
-}
 
 type RouterOptions struct {
 	ExactPathsOnly        bool // Appends the {$} for all paths in router
@@ -94,7 +83,6 @@ func (router Router) CreateRoute(path string, method string) string {
 	return url + pathEndString
 }
 
-// TODO: Add config to only run these in DEBUG mode
 func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Request, handler http.HandlerFunc, routeOptions *RouteOptions) {
 
 	//TODO: Make sure doesn't pass by reference
@@ -148,7 +136,7 @@ func (router Router) HandleFunc(path string, handler http.HandlerFunc, options *
 	})
 }
 
-func (router Router) Handle(path string, mux *http.ServeMux) {
+func (router Router) Use(path string, mux *http.ServeMux) {
 	router.Mux.Handle(path, &RouteHandler{
 		ChildMux: mux,
 		Router:   &router,
@@ -187,23 +175,7 @@ func (router Router) Serve(path string, filePath string, options *RouteOptions) 
 	route := router.CreateRoute(path, "GET")
 
 	router.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		data, err := ReadData(filePath)
-
-		if err != nil {
-			http.Error(w, "Error Reading file:\n"+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", http.DetectContentType(data))
-
-		_, err = w.Write(data)
-
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error serving file: %s", filePath), http.StatusInternalServerError)
-		}
-
+		http.ServeFile(w, r, filePath)
 	}, options)
 }
 
@@ -213,9 +185,6 @@ type ServeDirOptions struct {
 	Recursive                  bool
 }
 
-// Serves all html in given directory relative to app
-// Include trailing slash in dir name
-// TODO: rewrite with built in http functionality
 func (router Router) ServeDir(baseUrlPath string, dirPath string, options *ServeDirOptions) {
 	absPath, err := filepath.Abs(dirPath)
 
@@ -233,7 +202,9 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 
 		if file.IsDir() {
 			if options.Recursive {
-				router.ServeDir(baseUrlPath+file.Name()+"/", dirPath+file.Name()+"/", options)
+				newBaseUrl := AppendPath(baseUrlPath, file.Name())
+				newDirPath := AppendPath(dirPath, file.Name())
+				router.ServeDir(newBaseUrl, newDirPath, options)
 			}
 
 			continue
@@ -242,13 +213,13 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 		fileName := file.Name()
 		fileExtention := filepath.Ext(fileName)
 
-		if len(options.IncludedExtensions) > 0 && !slices.Contains(options.IncludedExtensions, fileExtention) {
+		if len(options.IncludedExtensions) > 0 && !slices.Contains(options.IncludedExtensions, fileExtention[1:]) {
 			continue
 		}
 
 		filePath := absPath + "/" + fileName
 
-		route := baseUrlPath + fileName
+		route := AppendPath(baseUrlPath, fileName)
 
 		if !options.RoutePathContainsExtension {
 			route = route[:len(route)-len(fileExtention)]

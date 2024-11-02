@@ -18,6 +18,7 @@
 * Cleanup Logs
 * Review How Asset Paths are Passed, Perhaps Should be Tied to Context
 * Create Server Functionality in Router
+* Update ReadMe
 
 ### CLI
 * Improve Dummy API UI
