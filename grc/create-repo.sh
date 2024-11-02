@@ -14,18 +14,17 @@ if [ "$#" -ne 2 ]; then
     usage
 fi
 
-curl -L https://github.com/jetnoli/go-router/zipball/development/ -o repo.zip
-unzip repo.zip -d repo
-
-
-# Directory where the single file is located
+# Directory to extract to
 DIR="repo"
 PROJECT_NAME="$1"
 MODULE_NAME="$2"
 
+curl -L https://github.com/jetnoli/go-router/zipball/development/ -o repo.zip
+unzip repo.zip -d $DIR
 mkdir $PROJECT_NAME
 
-# Find the only file in the directory
+# Find the extracted folder
+# As we don't know the folder name
 FIRST_DIR=$(find "$DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
 
 # Check if a directory was found
@@ -34,15 +33,15 @@ if [[ -z "$FIRST_DIR" ]]; then
     exit 1
 fi
 
-# New name for the file (provide a full path if renaming to a different directory)
-NEW_NAME="$DIR/contents/"  # Replace with the desired new filename and extension
+# Move directory static contents to this folder
+NEW_NAME="$DIR/contents/" 
 
 # Rename the file
 mv "$FIRST_DIR" "$NEW_NAME"
 
 cp -r "$DIR/contents/grc/static/" "$PROJECT_NAME/"
 rm repo.zip
-rm -rf repo/
+rm -rf $DIR
 
 # Step 2 Initialize Project and Install Templ
 cd $PROJECT_NAME

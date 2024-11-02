@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -8,6 +9,14 @@ import (
 	"os/exec"
 	"strings"
 )
+
+const FixCategory = "addembedimport" // recognized by gopls ApplyFix
+
+// Prevent go pls from removing embed script
+var _ = embed.FS{}
+
+//go:embed create-repo.sh
+var script []byte
 
 type CmdHandler = func()
 
@@ -93,8 +102,6 @@ func createProject() {
 
 	cmd := fmt.Sprintf("bash create-repo.sh %s %s", projectName, moduleName)
 
-	fmt.Println("command", cmd)
-
 	execOrExit(cmd, "")
 
 	cmd = "go get github.com/jetnoli/go-router"
@@ -135,6 +142,15 @@ func main() {
 
 		os.Exit(1)
 	}
+
+	scriptPath := "./create-repo.sh"
+
+	// Write the embedded script to a temporary file
+	err := os.WriteFile(scriptPath, script, 0755) // Give it executable permissions
+	if err != nil {
+		log.Fatalf("Failed to write script to file: %v", err)
+	}
+	defer os.Remove(scriptPath) // Clean up the temporary file after execution
 
 	process()
 
