@@ -1,0 +1,19 @@
+package home 
+
+import "github.com/jetnoli/go-router/grc/static/view/components/layout"
+
+//import /view/pages/home/home.css
+//import /assets/styles/page.css
+templ Index() {
+	@layout.Layout() {
+		<div class="container">
+			<div class="md-container">
+				<img src="/assets/images/background.png" alt="Notion" width="500" height="600"/>
+				<div class="save-button-container">
+					<button class="cancel-button" id="cancel-md">Cancel </button>
+					<button class="save-button" id="save-md" hx-post="/test-save" onclick="prepareSave()">Save </button>
+				</div>
+			</div>
+		</div>
+	}
+}

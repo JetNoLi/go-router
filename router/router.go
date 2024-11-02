@@ -8,11 +8,14 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/a-h/templ"
 	"github.com/jetnoli/go-router/utils"
 )
 
 // TODO: REMOVE AND REPLACE WITH BUILT IN FUNC FROM HTTP LIB
+// TODO: Move types to their own files
+// TODO: Add Request ID
+// TODO: Add in doc comments
+
 func ReadData(path string) (data []byte, err error) {
 	absPath, err := filepath.Abs(path)
 
@@ -20,12 +23,8 @@ func ReadData(path string) (data []byte, err error) {
 		return data, err
 	}
 
-	data, err = os.ReadFile(absPath)
-
-	return data, err
+	return os.ReadFile(absPath)
 }
-
-// END
 
 type RouterOptions struct {
 	ExactPathsOnly        bool // Appends the {$} for all paths in router
@@ -115,7 +114,6 @@ func (router Router) ExecuteWithMiddleware(w *http.ResponseWriter, r *http.Reque
 	}
 
 	for _, middleware := range preHandlerMiddleware {
-		// fmt.Printf("middleware applied %s", utils.GetFunctionName(middleware))
 		middleware(w, r)
 
 		if r.Context().Err() != nil {
@@ -258,53 +256,4 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 
 		router.Serve(route, filePath, &RouteOptions{})
 	}
-}
-
-// Non Lib Specific
-type TemplPageHandler struct {
-	Service *http.HandlerFunc
-	Path    string
-	Method  string
-}
-
-type TemplPage struct {
-	PageComponent templ.Component
-	Options       *RouteOptions
-	Handlers      []TemplPageHandler
-}
-
-func (router Router) ServeTempl(pageMap map[string]*TemplPage) {
-	for route, page := range pageMap {
-		for _, handler := range page.Handlers {
-			switch handler.Method {
-			case "post":
-				{
-					router.Post(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "put":
-				{
-					router.Put(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "get":
-				{
-					router.Get(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			case "delete":
-				{
-					router.Delete(handler.Path, *handler.Service, &RouteOptions{})
-				}
-			}
-		}
-
-		router.Get(route, func(w http.ResponseWriter, r *http.Request) {
-			err := page.PageComponent.Render(r.Context(), w)
-
-			if err != nil {
-				http.Error(w, "error serving page "+err.Error(), http.StatusInternalServerError)
-			}
-
-		}, page.Options)
-
-	}
-
 }

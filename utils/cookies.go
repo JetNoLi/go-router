@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// TODO: More Generic: Update to Take in a value
 func GenerateAuthCookie(userId int) (*http.Cookie, error) {
 	userIdStr := fmt.Sprintf("%d", userId)
 	token, err := GenerateJwt(userIdStr)

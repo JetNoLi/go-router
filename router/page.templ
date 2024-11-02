@@ -1,0 +1,81 @@
+package router
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func PrepareLink(link string) string {
+	i := strings.Index(link, pagesPath)
+	pathType := pagesPath
+
+	if i == -1 {
+		i = strings.Index(link, assetsPath)
+		pathType = assetsPath
+
+		if i == -1 {
+			i = strings.Index(link, componentsPath)
+			pathType = componentsPath
+
+			if i == -1 {
+				fmt.Printf("issue rendering link %s", link)
+				return link
+			}
+		}
+	}
+
+	//  "assets" included in url - assets/image.png
+	if pathType == assetsPath {
+		return link[i:]
+	}
+
+	// path type not included in url
+	return link[i+len(pathType):]
+}
+
+templ PageHead(assets AssetMap) {
+	<head>
+		for _, asset := range assets {
+			if asset.Typ == "css" {
+				<link type="text/css" rel="stylesheet" href={ PrepareLink(asset.Path) }/>
+			} else if asset.Typ == "js" {
+				<script src={ PrepareLink(asset.Path) }></script>
+			}
+		}
+	</head>
+}
+
+templ Empty() {
+}
+
+func optional(comp *templ.Component) templ.Component {
+	if comp != nil {
+		return *comp
+	}
+
+	return Empty()
+}
+
+templ Page(title string, comp *templ.Component, assets AssetMap) {
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>
+				{ title }
+			</title>
+			<script src="/assets/scripts/htmx.js"></script>
+			<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+			<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
+			@PageHead(assets)
+		</head>
+		<body>
+			@optional(comp)
+		</body>
+	</html>
+}
+
+func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap) error {
+	return Page("title", &comp, assets).Render(r.Context(), w)
+}

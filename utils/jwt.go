@@ -12,7 +12,10 @@ type UserJwt struct {
 	ExpiresAt string
 }
 
-var secret = []byte("MY_JWT_SECRET") // Replace with your desired secret
+// TODO: Make an ENV VAR
+// TODO: Add ENV VAR reading logic here as a utility
+// TODO: Add Debug Logs Functionality
+var secret = []byte("MY_JWT_SECRET")
 
 func GenerateJwt(userId string) (string, error) {
 
