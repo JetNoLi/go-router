@@ -8,8 +8,6 @@ import (
 	"github.com/a-h/templ"
 )
 
-// TODO: Pass component map in ctx
-// TODO: Allow a way to pass in any data the component may need, i.e. server rendering
 func (r Router) ServeTempl(route string, comp templ.Component, compMap *ComponentMap) error {
 
 	// assumption: route contains page name
@@ -18,7 +16,7 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	routeSplitLen := len(routeSplit)
 
 	// default / path to home component
-	// todo: allow for override
+	// TODO: allow for override
 	if route == "/" {
 		localPathName = "home"
 	}

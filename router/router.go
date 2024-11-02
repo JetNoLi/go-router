@@ -13,9 +13,7 @@ import (
 
 // TODO: REMOVE AND REPLACE WITH BUILT IN FUNC FROM HTTP LIB
 // TODO: Move types to their own files
-// TODO: Create custom Interface for Req, Res (ctx ?)
 // TODO: Add Request ID
-// TODO: Add in api version flow to router?
 // TODO: Add in doc comments
 
 func ReadData(path string) (data []byte, err error) {
