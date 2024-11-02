@@ -85,7 +85,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		}
 
 		// Check for All Assets inline, like image tags
-		// TODO: May need to cater for certain things being relative paths
+		// TODO: Need to cater for certain things being relative paths
 		if strings.Contains(line, "/assets/") {
 			splitLine := strings.Split(line, "\"")
 			path := ""
@@ -128,10 +128,6 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 // Reads through all pages + components and creates map
 // Read imports for components used
 // Read through components for assets used
-// detect this by keywords
-// .css - styles
-// .js - script
-// other -> in asset directory -> .includes assets
 func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap *AssetMap) error {
 	dir, err := os.ReadDir(path)
 
@@ -169,8 +165,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		if !slices.Contains(SupportedAssetTypes, fileType) && fileType != "templ" {
 			continue
 		}
-
-		fmt.Println(splitFileStr, len(splitFileStr))
 
 		// TODO: Note, certain files have . at the front
 		// TODO: Need to remove github.com from component path
@@ -248,7 +242,6 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	}
 
 	for _, nestedChildPath := range child.children {
-		fmt.Println("getting child assets", nestedChildPath, child)
 		err := GetChildAssets(compMap, nestedChildPath, assetMap)
 
 		if err != nil {

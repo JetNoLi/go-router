@@ -13,7 +13,6 @@
   * Make Consistent Flow
   * Use of AbsPath vs Relative in actual builds
 * Improve Env File Reading Flow
-* Replace Serve and Serve Dir with Built In Functionality
 * Setup Flow for DEBUG mode
 * Cleanup Logs
 * Review How Asset Paths are Passed, Perhaps Should be Tied to Context
@@ -36,8 +35,19 @@
 * Use FOP Structure for Config
 * Implement Ctx Object
 * Add SSR to Serve Templ
+* Review Middleware Interface
+* Improve Cancel Request Flow
+* Add Tests
 
 ### CLI
 * Add DB to Router Creation, will Support
   * PostGres
   * SqlLite
+* Find a way to Test
+
+
+## Version 0.3
+
+### Router
+* Create a Utility for Working with OAuth
+* Socket Integration
