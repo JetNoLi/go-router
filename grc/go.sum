@@ -8,6 +8,8 @@ github.com/jetnoli/go-router v0.0.0-20241028095340-3aa98a83dab9 h1:Et0yjDY+cPhgD
 github.com/jetnoli/go-router v0.0.0-20241028095340-3aa98a83dab9/go.mod h1:Ohqla0zetKtfDZK60ZToNM/iVv0HJeGYJfLGj2mP5Fo=
 github.com/jetnoli/go-router v0.0.0-20241102123124-bc6dea53ccef h1:sJ4SI1TAyzO54zK1iCPssxp/1mw9EgVPgCiQu9hez+U=
 github.com/jetnoli/go-router v0.0.0-20241102123124-bc6dea53ccef/go.mod h1:Ohqla0zetKtfDZK60ZToNM/iVv0HJeGYJfLGj2mP5Fo=
+github.com/jetnoli/go-router v0.0.0-20241102133422-147e650ca9f1 h1:cR7uAlQLqNFMdEDvmz9Qz3uBC5r3uHix2q8cXdcEduw=
+github.com/jetnoli/go-router v0.0.0-20241102133422-147e650ca9f1/go.mod h1:Ohqla0zetKtfDZK60ZToNM/iVv0HJeGYJfLGj2mP5Fo=
 golang.org/x/crypto v0.25.0 h1:ypSNr+bnYL2YhwoMt2zPxHFmbAN1KZs/njMG3hxUp30=
 golang.org/x/crypto v0.25.0/go.mod h1:T+wALwcMOSE0kXgUAnPAHqTLW+XHgcELELW8VaDgm/M=
 golang.org/x/sys v0.23.0 h1:YfKFowiIMvtgl1UERQoTPPToxltDeZfbj4H7dVUCwmM=
