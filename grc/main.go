@@ -136,9 +136,9 @@ func createProject() {
 
 	cmd = "go get github.com/jetnoli/go-router"
 
-	if *GRCV != "" {
-		cmd += fmt.Sprintf("@%s", *GRCV)
-	}
+	// if *GRCV != "" {
+	// 	cmd += fmt.Sprintf("@%s", *GRCV)
+	// }
 
 	execOrExit(cmd, projectName)
 
