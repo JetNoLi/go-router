@@ -119,6 +119,9 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 			if strings.Contains(line, "css") {
 				styleSheetPath := strings.Split(line, " ")[1]
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
+			} else if strings.Contains(line, "js") {
+				scriptPath := strings.Split(line, " ")[1]
+				assets = append(assets, Asset{Path: scriptPath, Typ: "js", Url: GetUrlFromPath(scriptPath)})
 			} else if strings.Contains(line, "components") {
 				childPath := strings.Split(line, " ")[1]
 				componentIndex := strings.Index(childPath, ComponentsPath)
@@ -279,15 +282,21 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	for path, compAsset := range *compMap {
 		splitPath := strings.Split(path, "/")
 
-		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+		if len(path) > 5 && path[len(path)-5:] == "templ" {
 			index := strings.Index(path, splitPath[len(splitPath)-1])
-			path = path[:index-1]
+			if index == -1 {
+				return fmt.Errorf("error getting child assets\npath: %s\ncompMap: %v", path, *compMap)
+			}
+			path = path[:index]
 		}
 
 		splitPath = strings.Split(childPath, ".")
 
-		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+		if len(path) > 5 && path[len(path)-5:] == "templ" {
 			index := strings.Index(path, splitPath[len(splitPath)-1])
+			if index == -1 {
+				return fmt.Errorf("error getting child assets\npath: %s\ncompMap: %v", childPath, *compMap)
+			}
 			childPath = childPath[:index-1]
 		}
 

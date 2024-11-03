@@ -1,6 +1,72 @@
-.header {
-    height: 60px;
-    background-color: bisque;
-    border-bottom: 1px solid black;
+.base-layout {
+    height: 100%;
     width: 100%;
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: var(--text-color);
+    padding: 1rem 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: var(--secondary-color);
+}
+
+.header-title {
+    margin: 0;
+    font-size: 2rem;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+footer {
+    background-color: var(--footer-bg);
+    color: var(--text-color);
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+}
+
+footer a {
+    color: var(--secondary-color);
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--secondary-color);
+}
+
+
+.animated-footer {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.footer-text {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.footer-text a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.footer-text a:hover {
+    text-decoration: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
