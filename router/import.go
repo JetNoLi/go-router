@@ -53,6 +53,12 @@ type AssetMap = map[string]Asset
 
 func ParsePageContents(path string) (*ComponentAsset, error) {
 	fmt.Println("Parsing page at", path)
+	absPath, err := filepath.Abs(path)
+
+	if err != nil {
+		fmt.Println("error with abs path", absPath)
+		return nil, err
+	}
 	file, err := os.Open(path)
 
 	if err != nil {
