@@ -330,6 +330,7 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 }
 
 func CreateAssetsFile(fileName string, rootDir string) {
+	fmt.Println("in create assets file")
 	absPath, err := filepath.Abs(rootDir)
 
 	if err != nil {
