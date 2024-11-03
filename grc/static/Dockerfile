@@ -3,6 +3,7 @@ FROM golang:1.22 AS builder
 ARG TEMPL_VERSION "latest"
 ARG GO_ROUTER_VERSION "latest"
 ARG PORT "3000"
+ARG ASSET_MAP_FILENAME="asset_map.json"
 
 WORKDIR /app
 
@@ -28,7 +29,7 @@ FROM golang:1.22 AS runner
 
 WORKDIR /app
 
-COPY --from=builder app/asset_map.json /app
+COPY --from=builder app/${ASSET_MAP_FILENAME} /app
 COPY --from=builder app/app.exe /app
 COPY --from=builder app/.env /app
 COPY --from=builder app/assets /app/assets

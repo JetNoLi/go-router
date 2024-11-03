@@ -16,20 +16,18 @@
 * Cleanup Logs
 * Create Server Functionality in Router
 * Update ReadMe
+* Add Tests
 
 ### CLI
 * Improve Dummy API UI
 * Add Basic BubbleTea Interface
 * Add Config to Configure HTMX as Asset in Install Flow
 * Allow Root File Path to be Chosen
-* Add Docker 
-  * Run CLI ass a Docker App
-  * Add Docker File and Docker Compose to Static so it's included in template repo 
+* * Find a way to Test
 
 ## Version 0.2
 
 ### Router
-* Review How Asset Paths are Passed, Perhaps Should be Tied to Context
 * Add in Flow for API Versioning
 * Use FOP Structure for Config
 * Implement Ctx Object
@@ -41,14 +39,14 @@
   * module name
   * version
   * etc...
-* Add Tests
+
 * Add scss support
 
 ### CLI
 * Add DB to Router Creation, will Support
   * PostGres
   * SqlLite
-* Find a way to Test
+
 
 
 ## Version 0.3

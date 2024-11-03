@@ -29,15 +29,12 @@ type ComponentAsset struct {
 
 // Removes . and .. from path, replaces with /
 func GetUrlFromPath(path string) string {
-	fmt.Println("getting url from path")
 	url := path
 
 	if len(url) <= 1 {
 		if url == "." {
 			url = "/"
 		}
-
-		fmt.Println("url ", url, " path ", path)
 
 		return url
 	}
@@ -52,8 +49,6 @@ func GetUrlFromPath(path string) string {
 			url = url[1:]
 		}
 	}
-
-	fmt.Println("url ", url, " path ", path)
 
 	return url
 }
@@ -73,27 +68,36 @@ func AppendPath(basePath string, path string) string {
 	return basePath + "/" + path
 }
 
-var componentsPath = "components/"
-var pagesPath = "pages/"
-var assetsPath = "assets/"
+func getEnvVarOrDefault(envVarName string, defaultVal string) string {
+	v := os.Getenv(envVarName)
+
+	if v == "" {
+		v = defaultVal
+	}
+
+	return v
+}
+
+var ComponentsPath = "components/"
+var PagesPath = "pages/"
+var AssetsPath = "assets/"
 var SupportedAssetTypes = []string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}
 var TemplateFileType = "templ"
+var AssetMapFileName = getEnvVarOrDefault("ASSET_MAP_FILENAME", "asset_map.json")
 
 type ComponentMap = map[string]*ComponentAsset
 type AssetMap = map[string]*Asset
 
 func ParsePageContents(path string) (*ComponentAsset, error) {
-	fmt.Println("Parsing page at", path)
 	absPath, err := filepath.Abs(path)
 
 	if err != nil {
-		fmt.Println("error with abs path", absPath)
 		return nil, err
 	}
+
 	file, err := os.Open(absPath)
 
 	if err != nil {
-		fmt.Println("open file error: ", err.Error(), " at abs path ", absPath)
 		return nil, err
 	}
 
@@ -109,8 +113,6 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		fmt.Println("in scanner", line)
-
 		// Handle Imports
 		//TODO: Cater for multi line import syntax
 		if strings.Contains(line, "import") {
@@ -119,7 +121,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
 			} else if strings.Contains(line, "components") {
 				childPath := strings.Split(line, " ")[1]
-				componentIndex := strings.Index(childPath, componentsPath)
+				componentIndex := strings.Index(childPath, ComponentsPath)
 
 				if componentIndex == -1 {
 					return nil, fmt.Errorf("invalid path for component %s %s", childPath, line)
@@ -166,7 +168,6 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Println("scanner error", err.Error())
 		return nil, err
 	}
 
@@ -182,7 +183,6 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 // Read imports for components used
 // Read through components for assets used
 func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap *AssetMap) error {
-	fmt.Println("in register assets", path)
 	dir, err := os.ReadDir(path)
 
 	if err != nil {
@@ -190,7 +190,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 	}
 
 	for _, file := range dir {
-		fmt.Println("file new", file)
 		fileName := file.Name()
 		fullPath := AppendPath(path, fileName)
 
@@ -231,11 +230,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			fullPath = fullPath[1:]
 		}
 
-		fmt.Println("fullPath", fullPath)
-
 		_, exists := (*compMap)[fullPath]
-
-		fmt.Println("exists", exists)
 
 		if exists {
 			continue
@@ -243,14 +238,11 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		_, exists = (*assetMap)[fullPath]
 
-		fmt.Println("exists assets", exists)
-
 		if exists {
 			continue
 		}
 
 		if fileType == "templ" {
-			fmt.Println("parsing templ page contents")
 			compAsset, err := ParsePageContents(fullPath)
 
 			if err != nil {
@@ -258,8 +250,6 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			}
 
 			index := strings.Index(fullPath, fileName)
-
-			fmt.Println("compAsset", compAsset)
 
 			(*compMap)[GetUrlFromPath(fullPath[:index-1])] = compAsset
 		} else if slices.Contains(SupportedAssetTypes, fileType) {
@@ -269,11 +259,9 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 				Url:  GetUrlFromPath(fullPath),
 			}
 
-			fmt.Println("asset", asset)
-
 			(*assetMap)[fullPath] = &asset
 		} else {
-			fmt.Println("else", fullPath)
+			return fmt.Errorf("error handling unknown file: \nname: %s\npath: %s", fileName, path)
 		}
 	}
 
@@ -310,7 +298,6 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	}
 
 	if !ok {
-		fmt.Println("error map", childPath, compMap)
 		return fmt.Errorf("child does not exist in component map %s", childPath)
 	}
 
@@ -337,8 +324,7 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 	compAsset := (*compMap)[path]
 
 	if !compAsset.IsPage {
-		fmt.Println("failing map", compAsset, "path is ", path)
-		return nil, fmt.Errorf("component at path %s is not a page", path)
+		return nil, fmt.Errorf("component at path %s is not a page\ncomp: %v", path, *compAsset)
 	}
 
 	assetMap := make(AssetMap)
@@ -366,13 +352,13 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 	err := RegisterAssets(rootDir, true, &compMap, &assetMap)
 
 	if err != nil {
-		os.Exit(1)
+		log.Fatal("error registering assets: ", err.Error())
 	}
 
 	for _, asset := range assetMap {
-		assetIndex := strings.Index(asset.Path, assetsPath)
-		componentIndex := strings.Index(asset.Path, componentsPath)
-		pageIndex := strings.Index(asset.Path, pagesPath)
+		assetIndex := strings.Index(asset.Path, AssetsPath)
+		componentIndex := strings.Index(asset.Path, ComponentsPath)
+		pageIndex := strings.Index(asset.Path, PagesPath)
 
 		assetUrl := ""
 
@@ -381,15 +367,15 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 		}
 
 		if componentIndex != -1 {
-			assetUrl = asset.Path[componentIndex+len(componentsPath):]
+			assetUrl = asset.Path[componentIndex+len(ComponentsPath):]
 		}
 
 		if pageIndex != -1 {
-			assetUrl = asset.Path[pageIndex+len(pagesPath):]
+			assetUrl = asset.Path[pageIndex+len(PagesPath):]
 		}
 
 		if assetUrl == "" {
-			os.Exit(1)
+			log.Fatal("asset url not defined for asset ", *asset)
 		}
 
 		asset.Url = assetUrl
@@ -399,19 +385,9 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 }
 
 func CreateAssetsFile(path string) {
-	fmt.Println("in create assets file")
-	absPath, err := filepath.Abs(path)
-
-	if err != nil {
-		fmt.Println("error getting absPath", err.Error())
-	}
-
 	compMap, assetMap := LoadImports(path)
 
-	fmt.Println(compMap, absPath)
-
-	//TODO: Make name a constant and allow override by env var
-	file, err := os.Create("asset_map.json")
+	file, err := os.Create(AssetMapFileName)
 
 	if err != nil {
 		log.Fatalf("error creating file: %s", err.Error())

@@ -233,7 +233,6 @@ func (router Router) ServeAssets(assetFilePath string) (ComponentMap, AssetMap) 
 	compMap, assetMap := ReadAssetsFile(assetFilePath)
 
 	for _, asset := range assetMap {
-		fmt.Println("serving asset", *asset)
 		router.Serve(asset.Url, asset.Path, &RouteOptions{})
 	}
 

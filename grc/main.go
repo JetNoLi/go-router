@@ -49,8 +49,6 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 	for _, file := range dir {
 		fileName := path + "/" + file.Name()
 
-		fmt.Println("replacing ", fileName)
-
 		if file.IsDir() {
 			err = replaceModuleName(projectName, moduleName, fileName)
 
@@ -93,8 +91,6 @@ func createEnvFile(fileName string, vars map[string]string) error {
 // and return the output or call os.Exit(1) on failure
 func execOrExit(cmdStr string, dir string) string {
 	cmds := strings.Split(strings.TrimSpace(cmdStr), " ")
-
-	fmt.Println(cmds)
 
 	cmd := exec.Command(cmds[0], cmds[1:]...)
 

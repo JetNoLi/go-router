@@ -11,7 +11,7 @@ import (
 func PageRouter() *http.ServeMux {
 	r := router.CreateRouter("/", router.RouterOptions{})
 
-	compMap, _ := r.ServeAssets("./asset_map.json")
+	compMap, _ := r.ServeAssets("./" + router.AssetMapFileName)
 
 	r.ServeTempl("/", home.Index(), &compMap)
 
