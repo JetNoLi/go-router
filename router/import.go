@@ -249,6 +249,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			(*assetMap)[fullPath] = &Asset{
 				Path: fullPath,
 				Typ:  fileType,
+				Url:  GetUrlFromPath(fullPath),
 			}
 		}
 	}
