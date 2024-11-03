@@ -116,9 +116,13 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		// Handle Imports
 		//TODO: Cater for multi line import syntax
 		if strings.Contains(line, "import") {
-			if strings.Contains(line, "css") || strings.Contains(line, "js") {
+			if strings.Contains(line, "css") {
 				styleSheetPath := strings.Split(line, " ")[1]
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
+			} else if strings.Contains(line, "js") {
+				scriptPath := strings.Split(line, " ")[1]
+				fmt.Println("import js", scriptPath, GetUrlFromPath(scriptPath))
+				assets = append(assets, Asset{Path: scriptPath, Typ: "js", Url: GetUrlFromPath(scriptPath)})
 			} else if strings.Contains(line, "components") {
 				childPath := strings.Split(line, " ")[1]
 				componentIndex := strings.Index(childPath, ComponentsPath)
