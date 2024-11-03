@@ -116,7 +116,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		// Handle Imports
 		//TODO: Cater for multi line import syntax
 		if strings.Contains(line, "import") {
-			if strings.Contains(line, "css") {
+			if strings.Contains(line, "css") || strings.Contains(line, "js") {
 				styleSheetPath := strings.Split(line, " ")[1]
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
 			} else if strings.Contains(line, "components") {
