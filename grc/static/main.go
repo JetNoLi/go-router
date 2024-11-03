@@ -27,12 +27,6 @@ func main() {
 		// PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 	})
 
-	_, assetMap := router.LoadImports("./")
-
-	for _, asset := range assetMap {
-		r.Serve(asset.Path, asset.Path, &router.RouteOptions{})
-	}
-
 	r.Use("/health", routes.HealthRouter())
 	r.Use("/", routes.PageRouter())
 

@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/jetnoli/go-router/grc/static/view/pages/home"
@@ -12,11 +11,7 @@ import (
 func PageRouter() *http.ServeMux {
 	r := router.CreateRouter("/", router.RouterOptions{})
 
-	compMap, _ := router.ReadAssetsFile("./asset_map.json")
-
-	fmt.Println("compMap", compMap)
-
-	r.ServeAssets("./asset_map.json")
+	compMap, _ := r.ServeAssets("./asset_map.json")
 
 	r.ServeTempl("/", home.Index(), &compMap)
 
