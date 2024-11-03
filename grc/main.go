@@ -93,7 +93,7 @@ func createEnvFile(fileName string, vars map[string]string) error {
 // This function is used to execute commands with os.Exec
 // and return the output or call os.Exit(1) on failure
 func execOrExit(cmdStr string, dir string) string {
-	cmds := strings.Split(cmdStr, " ")
+	cmds := strings.Split(strings.TrimSpace(cmdStr), " ")
 
 	fmt.Println(cmds)
 
