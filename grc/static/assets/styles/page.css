@@ -8,17 +8,9 @@ html,
 body {
     width: 100%;
     height: 100%;
-    background-color: rgb(233, 238, 240);
-    font-family: Arial, sans-serif;
 }
 
 :root {
-    --blue: #007bff;
-    --dark-blue: #0056b3;
-    --light-blue: #f0f8ff;
-    --grey: #d3d3d3;
-    --dark-grey: #a9a9a9;
-
     --xxsm: .1rem;
     --xsm: .25rem;
     --sm: .5rem;
@@ -33,4 +25,35 @@ body {
     --br-lg: 8px;
     --br-xlg: 12px;
 
+    --primary-color: #00ADD8;
+    --secondary-color: #2D3748;
+    --background-color: #F0F4F8;
+    --header-bg: #e0f7fa;
+    --footer-bg: #F7FAFC;
+    --text-color: #4A5568;
+    --feature-bg: #FFFFFF;
+    --feature-1: #FF6B6B;
+    --feature-2: #4ECDC4;
+    --feature-3: #45B7D1;
+    --feature-4: #F9DB6D;
+}
+
+.dark {
+    --primary-color: #5ED3F3;
+    --secondary-color: #E2E8F0;
+    --background-color: #1A202C;
+    --header-bg: #2D3748;
+    --text-color: #E2E8F0;
+    --footer-bg: #1A202C;
+    --feature-bg: #2D3748;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }

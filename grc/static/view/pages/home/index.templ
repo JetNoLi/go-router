@@ -4,14 +4,44 @@ import "github.com/jetnoli/go-router/grc/static/view/components/layout"
 
 //import /view/pages/home/home.css
 //import /assets/styles/page.css
+//import /assets/scripts/theme.js
 templ Index() {
 	@layout.Layout() {
 		<div class="container">
-			<div class="md-container">
-				<img src="/assets/images/background.png" alt="Notion" width="500" height="600"/>
-				<div class="save-button-container">
-					<button class="cancel-button" id="cancel-md">Cancel </button>
-					<button class="save-button" id="save-md" hx-post="/test-save" onclick="prepareSave()">Save </button>
+			<div class="features">
+				<div class="feature">
+					<svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+					</svg>
+					<h2>Go Powered</h2>
+					<p>Lightning-fast routing with Go's simplicity.</p>
+				</div>
+				<div class="feature">
+					<svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M4 4H20V20H4V4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M4 10H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M10 4V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+					</svg>
+					<h2>HTMX Integration</h2>
+					<p>Seamless dynamic UIs with minimal JavaScript.</p>
+				</div>
+				<div class="feature">
+					<svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M4 7V4H20V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M9 20H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M12 4V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+					</svg>
+					<h2>Templ Templating</h2>
+					<p>Type-safe HTML templates with Go.</p>
+				</div>
+				<div class="feature">
+					<svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+					</svg>
+					<h2>Fast Development</h2>
+					<p>Rapid prototyping with our CLI tool.</p>
 				</div>
 			</div>
 		</div>
