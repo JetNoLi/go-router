@@ -52,7 +52,7 @@ type ComponentMap = map[string]ComponentAsset
 type AssetMap = map[string]Asset
 
 func ParsePageContents(path string) (*ComponentAsset, error) {
-
+	fmt.Println("Parsing page at", path)
 	file, err := os.Open(path)
 
 	if err != nil {
@@ -182,7 +182,11 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 			fullPath = fullPath[1:]
 		}
 
+		fmt.Println("fullPath", fullPath)
+
 		_, exists := (*compMap)[fullPath]
+
+		fmt.Println("exists", exists)
 
 		if exists {
 			continue
@@ -195,6 +199,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		}
 
 		if fileType == "templ" {
+			fmt.Println("parsing templ page contents")
 			compAsset, err := ParsePageContents(fullPath)
 
 			if err != nil {
