@@ -20,7 +20,7 @@ DIR="repo"
 PROJECT_NAME="$1"
 MODULE_NAME="$2"
 
-curl -L https://github.com/jetnoli/go-router/zipball/development/ -o repo.zip
+curl -L https://github.com/jetnoli/go-router/zipball/feat/improve-template-app/ -o repo.zip
 unzip repo.zip -d $DIR
 mkdir $PROJECT_NAME
 
