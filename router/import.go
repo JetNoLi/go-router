@@ -353,7 +353,7 @@ func CreateAssetsFile(fileName string, rootDir string) {
 		fmt.Println("error getting absPath", err.Error())
 	}
 
-	compMap, _ := LoadImports(rootDir)
+	compMap, assetMap := LoadImports(rootDir)
 
 	fmt.Println(compMap, absPath)
 
@@ -364,7 +364,10 @@ func CreateAssetsFile(fileName string, rootDir string) {
 	}
 	defer file.Close()
 
-	err = json.NewEncoder(file).Encode(compMap)
+	err = json.NewEncoder(file).Encode(AssetFile{
+		CompMap:  compMap,
+		AssetMap: assetMap,
+	})
 
 	if err != nil {
 		log.Fatalf("error encoding file contents: %s", err.Error())

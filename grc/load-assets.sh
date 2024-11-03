@@ -12,4 +12,4 @@ go mod init app-builder
 go get github.com/jetnoli/go-router@${goRouterVersion}
 cat ../_go.txt > main.go
 go mod tidy
-go run main.go ../
+go run main.go ../static
