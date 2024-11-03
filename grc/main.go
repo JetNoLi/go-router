@@ -8,12 +8,14 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/jetnoli/go-router/router"
 )
 
 // Prevent go pls from removing embed script
 var _ = embed.FS{}
 
-//go:embed create-repo.sh
+//go:embed scripts/create-repo.sh
 var script []byte
 
 type CmdHandler = func()
@@ -21,7 +23,8 @@ type CmdHandler = func()
 const DEBUG = true
 
 var CMDS = map[string]CmdHandler{
-	"create": createProject,
+	"create":   createProject,
+	"generate": generateAssets,
 }
 
 var BASE_ENV_VARS = map[string]string{
@@ -152,6 +155,13 @@ func createProject() {
 	execOrExit("templ generate", projectName)
 
 	execOrExit("go mod tidy", projectName)
+
+	fmt.Println("Project Created Successfully!")
+}
+
+func generateAssets() {
+	router.CreateAssetsFile("./")
+	fmt.Println("Asset Map Generated Successfully!")
 }
 
 func main() {
@@ -174,7 +184,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scriptPath := "./create-repo.sh"
+	scriptPath := "create-repo.sh"
 
 	// Write the embedded script to a temporary file
 	err := os.WriteFile(scriptPath, script, 0755) // Give it executable permissions
@@ -185,5 +195,4 @@ func main() {
 
 	process()
 
-	fmt.Println("Project Created Successfully!")
 }

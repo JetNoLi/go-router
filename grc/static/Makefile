@@ -5,7 +5,7 @@ air:
 	@air
 
 assets:
-	@load_assets.sh
+	@bash load_assets.sh
 
 db/create: 
 	@docker compose up db --build

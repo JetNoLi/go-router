@@ -398,19 +398,20 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 	return compMap, assetMap
 }
 
-func CreateAssetsFile(fileName string, rootDir string) {
+func CreateAssetsFile(path string) {
 	fmt.Println("in create assets file")
-	absPath, err := filepath.Abs(rootDir)
+	absPath, err := filepath.Abs(path)
 
 	if err != nil {
 		fmt.Println("error getting absPath", err.Error())
 	}
 
-	compMap, assetMap := LoadImports(rootDir)
+	compMap, assetMap := LoadImports(path)
 
 	fmt.Println(compMap, absPath)
 
-	file, err := os.Create(fileName)
+	//TODO: Make name a constant and allow override by env var
+	file, err := os.Create("asset_map.json")
 
 	if err != nil {
 		log.Fatalf("error creating file: %s", err.Error())
