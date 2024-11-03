@@ -121,7 +121,6 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
 			} else if strings.Contains(line, "js") {
 				scriptPath := strings.Split(line, " ")[1]
-				fmt.Println("import js", scriptPath, GetUrlFromPath(scriptPath))
 				assets = append(assets, Asset{Path: scriptPath, Typ: "js", Url: GetUrlFromPath(scriptPath)})
 			} else if strings.Contains(line, "components") {
 				childPath := strings.Split(line, " ")[1]
@@ -283,11 +282,6 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	for path, compAsset := range *compMap {
 		splitPath := strings.Split(path, "/")
 
-		// Check if final word of path is templ
-		// if strings.Contains(splitPath[len(splitPath)-1], "templ") {
-		// 	index := strings.Index(path, splitPath[len(splitPath)-1])
-		// 	path = path[:index-1]
-		// }
 		if len(path) > 5 && path[len(path)-5:] == "templ" {
 			index := strings.Index(path, splitPath[len(splitPath)-1])
 			if index == -1 {
