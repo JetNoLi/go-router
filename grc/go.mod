@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/a-h/templ v0.2.793
-	github.com/jetnoli/go-router v0.0.0-20241103131826-466ebc4b51b5
+	github.com/jetnoli/go-router v0.0.0-20241103152346-58353253f570
 )
 
 require (

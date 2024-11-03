@@ -30,6 +30,7 @@ var CMDS = map[string]CmdHandler{
 var BASE_ENV_VARS = map[string]string{
 	"PORT":               "3000",
 	"TEMPL_VERSION":      "latest",
+	"GO_ROUTER_VERSION":  "latest",
 	"ASSET_MAP_FILENAME": router.AssetMapFileName,
 }
 
@@ -140,6 +141,8 @@ func createProject() {
 		*GRCV = strings.TrimSpace(*GRCV)
 		cmd += fmt.Sprintf("@%s", *GRCV)
 		vars["GO_ROUTER_VERSION"] = *GRCV
+	} else {
+		cmd += fmt.Sprintf("@%s", vars["GO_ROUTER_VERSION"])
 	}
 
 	execOrExit(cmd, projectName)
