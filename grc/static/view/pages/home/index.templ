@@ -2,6 +2,15 @@ package home
 
 import "github.com/jetnoli/go-router/grc/static/view/components/layout"
 
+templ PageData() {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+}
+
+func PageHead() *templ.Component {
+	pageData := PageData()
+	return &pageData
+}
+
 //import /view/pages/home/home.css
 //import /assets/styles/page.css
 //import /assets/scripts/theme.js
