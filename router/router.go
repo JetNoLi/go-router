@@ -232,7 +232,7 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 func (router Router) ServeAssets(assetFilePath string) {
 	_, assetMap := ReadAssetsFile(assetFilePath)
 
-	for assetUrl, asset := range assetMap {
-		router.Serve(asset.Path, assetUrl, &RouteOptions{})
+	for _, asset := range assetMap {
+		router.Serve(asset.Url, asset.Path, &RouteOptions{})
 	}
 }

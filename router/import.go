@@ -72,8 +72,8 @@ var assetsPath = "assets/"
 var SupportedAssetTypes = []string{"css", "js", "scss", "png", "jpg", "jpeg", "svg"}
 var TemplateFileType = "templ"
 
-type ComponentMap = map[string]ComponentAsset
-type AssetMap = map[string]Asset
+type ComponentMap = map[string]*ComponentAsset
+type AssetMap = map[string]*Asset
 
 func ParsePageContents(path string) (*ComponentAsset, error) {
 	fmt.Println("Parsing page at", path)
@@ -243,10 +243,10 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 			index := strings.Index(fullPath, fileName)
 
-			(*compMap)[fullPath[:index-1]] = *compAsset
+			(*compMap)[fullPath[:index-1]] = compAsset
 		} else if slices.Contains(SupportedAssetTypes, fileType) {
 
-			(*assetMap)[fullPath] = Asset{
+			(*assetMap)[fullPath] = &Asset{
 				Path: fullPath,
 				Typ:  fileType,
 			}
@@ -276,7 +276,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 		}
 
 		if strings.Contains(path, childPath) || strings.Contains(childPath, path) {
-			child = compAsset
+			child = *compAsset
 			ok = true
 		}
 	}
@@ -296,7 +296,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 
 	for _, asset := range child.Assets {
 		if _, ok := (*assetMap)[asset.Path]; !ok {
-			(*assetMap)[asset.Path] = asset
+			(*assetMap)[asset.Path] = &asset
 		}
 
 	}
@@ -324,7 +324,7 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 	}
 
 	for _, asset := range compAsset.Assets {
-		assetMap[asset.Path] = asset
+		assetMap[asset.Path] = &asset
 	}
 
 	return assetMap, nil
