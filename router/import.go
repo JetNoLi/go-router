@@ -113,7 +113,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		if strings.Contains(line, "import") {
 			if strings.Contains(line, "css") {
 				styleSheetPath := strings.Split(line, " ")[1]
-				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css"})
+				assets = append(assets, Asset{Path: styleSheetPath, Typ: "css", Url: GetUrlFromPath(styleSheetPath)})
 			} else if strings.Contains(line, "components") {
 				childPath := strings.Split(line, " ")[1]
 				componentIndex := strings.Index(childPath, componentsPath)
@@ -235,6 +235,8 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 		_, exists = (*assetMap)[fullPath]
 
+		fmt.Println("exists assets", exists)
+
 		if exists {
 			continue
 		}
@@ -257,6 +259,8 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 				Typ:  fileType,
 				Url:  GetUrlFromPath(fullPath),
 			}
+		} else {
+			fmt.Println("else", fullPath)
 		}
 	}
 
