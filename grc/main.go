@@ -23,8 +23,8 @@ type CmdHandler = func()
 const DEBUG = true
 
 var CMDS = map[string]CmdHandler{
-	"create":   createProject,
-	"generate": generateAssets,
+	"create":          createProject,
+	"generate-assets": generateAssets,
 }
 
 var BASE_ENV_VARS = map[string]string{
@@ -135,15 +135,16 @@ func createProject() {
 		log.Fatalf("error replacing module name: %s %s, %s", err.Error(), projectName, moduleName)
 	}
 
+	vars := BASE_ENV_VARS
+
 	cmd = "go get github.com/jetnoli/go-router"
 
 	if *GRCV != "" {
 		cmd += fmt.Sprintf("@%s", *GRCV)
+		vars["GO_ROUTER_VERSION"] = *GRCV
 	}
 
 	execOrExit(cmd, projectName)
-
-	vars := BASE_ENV_VARS
 
 	envPath := fmt.Sprintf("%s/.env", projectName)
 	err = createEnvFile(envPath, vars)

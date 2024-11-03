@@ -10,6 +10,7 @@ COPY .  .
 COPY ./.env /app/
 
 RUN go install github.com/a-h/templ/cmd/templ@${TEMPL_VERSION}
+RUN go install github.com/jetnoli/go-router/grc@${GO_ROUTER_VERSION}
 RUN templ generate
 
 RUN ./load_assets.sh
