@@ -184,7 +184,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 		// TODO: Note, certain files have . at the front
 		// TODO: Need to remove github.com from component path
 
-		if fullPath[0] == '.' {
+		if fullPath[0] == '.' && (len(fullPath) > 1 && fullPath[1] != '/' && fullPath[1] != '.') {
 			fullPath = fullPath[1:]
 		}
 
