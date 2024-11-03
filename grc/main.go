@@ -28,8 +28,9 @@ var CMDS = map[string]CmdHandler{
 }
 
 var BASE_ENV_VARS = map[string]string{
-	"PORT":          "3000",
-	"TEMPL_VERSION": "latest",
+	"PORT":               "3000",
+	"TEMPL_VERSION":      "latest",
+	"ASSET_MAP_FILENAME": router.AssetMapFileName,
 }
 
 // Flags
@@ -157,7 +158,8 @@ func createProject() {
 	fmt.Println("Project Created Successfully!")
 
 	fmt.Println("Generating Assets...")
-	generateAssets()
+
+	router.CreateAssetsFile(fmt.Sprintf("./%s", projectName))
 
 }
 
