@@ -78,7 +78,7 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		err = Render(w, r, comp, assetMap)
+		err = Render(w, r, comp, assetMap, optsFuncs...)
 
 		if err != nil {
 			http.Error(w, "error serving page "+err.Error(), http.StatusInternalServerError)
