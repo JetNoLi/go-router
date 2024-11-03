@@ -40,10 +40,11 @@ func GetUrlFromPath(path string) string {
 	if path[0] == '.' {
 		if path[1] == '/' {
 			path = path[1:]
-		}
-		if path[1] == '.' {
+		} else if path[1] == '.' {
 			tmp := GetUrlFromPath(path[1:])
 			path = tmp
+		} else {
+			path = path[1:]
 		}
 	}
 
