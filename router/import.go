@@ -277,6 +277,10 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	ok := false
 	child := ComponentAsset{}
 
+	if childPath[0] == '.' {
+		childPath = childPath[1:]
+	}
+
 	for path, compAsset := range *compMap {
 		splitPath := strings.Split(path, "/")
 
