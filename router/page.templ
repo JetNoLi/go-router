@@ -7,16 +7,16 @@ import (
 )
 
 func PrepareLink(link string) string {
-	i := strings.Index(link, pagesPath)
-	pathType := pagesPath
+	i := strings.Index(link, PagesPath)
+	pathType := PagesPath
 
 	if i == -1 {
-		i = strings.Index(link, assetsPath)
-		pathType = assetsPath
+		i = strings.Index(link, AssetsPath)
+		pathType = AssetsPath
 
 		if i == -1 {
-			i = strings.Index(link, componentsPath)
-			pathType = componentsPath
+			i = strings.Index(link, ComponentsPath)
+			pathType = ComponentsPath
 
 			if i == -1 {
 				fmt.Printf("issue rendering link %s", link)
@@ -26,7 +26,7 @@ func PrepareLink(link string) string {
 	}
 
 	//  "assets" included in url - assets/image.png
-	if pathType == assetsPath {
+	if pathType == AssetsPath {
 		return link[i:]
 	}
 
@@ -34,7 +34,7 @@ func PrepareLink(link string) string {
 	return link[i+len(pathType):]
 }
 
-templ PageHead(assets AssetMap) {
+templ PageHead(assets AssetMap, headData *templ.Component) {
 	<head>
 		for _, asset := range assets {
 			if asset.Typ == "css" {
@@ -43,6 +43,7 @@ templ PageHead(assets AssetMap) {
 				<script src={ PrepareLink(asset.Path) }></script>
 			}
 		}
+		@optional(headData)
 	</head>
 }
 
@@ -57,7 +58,7 @@ func optional(comp *templ.Component) templ.Component {
 	return Empty()
 }
 
-templ Page(title string, comp *templ.Component, assets AssetMap) {
+templ Page(title string, comp *templ.Component, assets AssetMap, headData *templ.Component) {
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
@@ -68,7 +69,7 @@ templ Page(title string, comp *templ.Component, assets AssetMap) {
 			<script src="/assets/scripts/htmx.js"></script>
 			<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 			<script src="https://kit.fontawesome.com/713dcfea64.js" crossorigin="anonymous"></script>
-			@PageHead(assets)
+			@PageHead(assets, headData)
 		</head>
 		<body>
 			@optional(comp)
@@ -76,6 +77,12 @@ templ Page(title string, comp *templ.Component, assets AssetMap) {
 	</html>
 }
 
-func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap) error {
-	return Page("title", &comp, assets).Render(r.Context(), w)
+func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap, optsFunc ...ServeTemplOptsFunc) error {
+	opts := &ServeTemplOptions{}
+
+	for _, optFn := range optsFunc {
+		optFn(opts)
+	}
+
+	return Page("title", &comp, assets, opts.HeadData).Render(r.Context(), w)
 }
