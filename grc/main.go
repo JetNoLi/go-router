@@ -140,6 +140,7 @@ func createProject() {
 	cmd = "go get github.com/jetnoli/go-router"
 
 	if *GRCV != "" {
+		*GRCV = strings.TrimSpace(*GRCV)
 		cmd += fmt.Sprintf("@%s", *GRCV)
 		vars["GO_ROUTER_VERSION"] = *GRCV
 	}
@@ -158,6 +159,10 @@ func createProject() {
 	execOrExit("go mod tidy", projectName)
 
 	fmt.Println("Project Created Successfully!")
+
+	fmt.Println("Generating Assets...")
+	generateAssets()
+
 }
 
 func generateAssets() {
