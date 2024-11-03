@@ -104,7 +104,7 @@ func execOrExit(cmdStr string, dir string) string {
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Fatalf("Error running command %s: %v\nOutput: %s", cmdStr, err, output)
+		log.Fatalf("Error running command %s in %s %v\nOutput: %s", cmdStr, dir, err, output)
 	}
 
 	if DEBUG {
