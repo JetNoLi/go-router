@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        TEMPL_VERSION: ${TEMPL_VERSION}
+        APP_NAME: ${APP_NAME}
+        GO_ROUTER_VERSION: ${GO_ROUTER_VERSION}
+        PORT : ${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - app
+networks:
+  app:

@@ -26,6 +26,13 @@ var CMDS = map[string]CmdHandler{
 	"create": createProject,
 }
 
+var BASE_ENV_VARS = map[string]string{
+	"PORT":              "3000",
+	"TEMPL_VERSION":     "latest",
+	"GO_ROUTER_VERSION": "latest",
+	"APP_NAME":          "myapp",
+}
+
 // Flags
 
 // go router version commit version to be used
@@ -64,6 +71,21 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 	}
 
 	return nil
+}
+
+func createEnvFile(fileName string, vars map[string]string) error {
+	data := ""
+
+	for key, v := range vars {
+		if data != "" {
+			data += "\n"
+		}
+
+		data += fmt.Sprintf("%s=%s", key, v)
+	}
+
+	//TODO: Double check which perms to use
+	return os.WriteFile(fileName, []byte(data), os.ModePerm)
 }
 
 // This function is used to execute commands with os.Exec
@@ -115,7 +137,22 @@ func createProject() {
 	err := replaceModuleName(projectName, moduleName, projectName)
 
 	if err != nil {
-		log.Fatalf("error replacing module name %s, %s", projectName, moduleName)
+		log.Fatalf("error replacing module name: %s %s, %s", err.Error(), projectName, moduleName)
+	}
+
+	vars := BASE_ENV_VARS
+
+	vars["APP_NAME"] = projectName
+
+	if *GRCV != "" {
+		vars["GO_ROUTER_VERSION"] = *GRCV
+	}
+
+	envPath := fmt.Sprintf("%s/.env", projectName)
+	err = createEnvFile(envPath, vars)
+
+	if err != nil {
+		log.Fatalf("error creating env file %s", err.Error())
 	}
 
 	execOrExit("templ generate", projectName)

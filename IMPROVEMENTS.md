@@ -12,10 +12,8 @@
 * Clean Up File Reading
   * Make Consistent Flow
   * Use of AbsPath vs Relative in actual builds
-* Improve Env File Reading Flow
 * Setup Flow for DEBUG mode
 * Cleanup Logs
-* Review How Asset Paths are Passed, Perhaps Should be Tied to Context
 * Create Server Functionality in Router
 * Update ReadMe
 
@@ -31,13 +29,20 @@
 ## Version 0.2
 
 ### Router
+* Review How Asset Paths are Passed, Perhaps Should be Tied to Context
 * Add in Flow for API Versioning
 * Use FOP Structure for Config
 * Implement Ctx Object
 * Add SSR to Serve Templ
 * Review Middleware Interface
 * Improve Cancel Request Flow
+* Create Config File for All Options
+  * i.e. what supported assets
+  * module name
+  * version
+  * etc...
 * Add Tests
+* Add scss support
 
 ### CLI
 * Add DB to Router Creation, will Support
