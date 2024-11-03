@@ -27,6 +27,29 @@ type ComponentAsset struct {
 	Assets   []Asset  `json:"assets"`
 }
 
+// Removes . and .. from path, replaces with /
+func GetUrlFromPath(path string) string {
+	if len(path) <= 1 {
+		if path == "." {
+			path = "/"
+		}
+
+		return path
+	}
+
+	if path[0] == '.' {
+		if path[1] == '/' {
+			path = path[1:]
+		}
+		if path[1] == '.' {
+			tmp := GetUrlFromPath(path[1:])
+			path = tmp
+		}
+	}
+
+	return path
+}
+
 // Combine 2 url paths, removing the trailing / and catering for overlapping /s
 // for example
 // /base/ + /append/ = /base/append
@@ -119,6 +142,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 
 			asset := Asset{
 				Path: path,
+				Url:  GetUrlFromPath(path),
 				Typ:  fileType,
 			}
 
