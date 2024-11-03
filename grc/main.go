@@ -50,6 +50,8 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 	for _, file := range dir {
 		fileName := path + "/" + file.Name()
 
+		fmt.Println("replacing ", fileName)
+
 		if file.IsDir() {
 			err = replaceModuleName(projectName, moduleName, fileName)
 
