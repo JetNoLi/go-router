@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # STEP 1: Get Template Content
 

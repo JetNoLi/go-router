@@ -8,10 +8,12 @@ import (
 	"github.com/jetnoli/go-router/router"
 )
 
-func PageRouter(compMap *router.ComponentMap) *http.ServeMux {
+func PageRouter() *http.ServeMux {
 	r := router.CreateRouter("/", router.RouterOptions{})
 
-	r.ServeTempl("/", home.Index(), compMap)
+	compMap, _ := r.ServeAssets("./" + router.AssetMapFileName)
+
+	r.ServeTempl("/", home.Index(), &compMap)
 
 	return r.Mux
 }

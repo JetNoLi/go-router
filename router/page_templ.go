@@ -15,17 +15,17 @@ import (
 )
 
 func PrepareLink(link string) string {
-	i := strings.Index(link, pagesPath)
-	pathType := pagesPath
+	i := strings.Index(link, PagesPath)
+	pathType := PagesPath
 
 	if i == -1 {
-		i = strings.Index(link, assetsPath)
-		pathType = assetsPath
+		i = strings.Index(link, AssetsPath)
+		pathType = AssetsPath
 
 		if i == -1 {
 
-			i = strings.Index(link, componentsPath)
-			pathType = componentsPath
+			i = strings.Index(link, ComponentsPath)
+			pathType = ComponentsPath
 
 			if i == -1 {
 				fmt.Printf("issue rendering link %s", link)
@@ -35,7 +35,7 @@ func PrepareLink(link string) string {
 
 	}
 
-	if pathType == assetsPath {
+	if pathType == AssetsPath {
 		return link[i:]
 	}
 

@@ -8,14 +8,14 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-)
 
-const FixCategory = "addembedimport" // recognized by gopls ApplyFix
+	"github.com/jetnoli/go-router/router"
+)
 
 // Prevent go pls from removing embed script
 var _ = embed.FS{}
 
-//go:embed create-repo.sh
+//go:embed scripts/create-repo.sh
 var script []byte
 
 type CmdHandler = func()
@@ -23,7 +23,14 @@ type CmdHandler = func()
 const DEBUG = true
 
 var CMDS = map[string]CmdHandler{
-	"create": createProject,
+	"create":          createProject,
+	"generate-assets": generateAssets,
+}
+
+var BASE_ENV_VARS = map[string]string{
+	"PORT":               "3000",
+	"TEMPL_VERSION":      "latest",
+	"ASSET_MAP_FILENAME": router.AssetMapFileName,
 }
 
 // Flags
@@ -66,10 +73,25 @@ func replaceModuleName(projectName string, moduleName string, path string) error
 	return nil
 }
 
+func createEnvFile(fileName string, vars map[string]string) error {
+	data := ""
+
+	for key, v := range vars {
+		if data != "" {
+			data += "\n"
+		}
+
+		data += fmt.Sprintf("%s=%s", key, v)
+	}
+
+	//TODO: Double check which perms to use
+	return os.WriteFile(fileName, []byte(data), os.ModePerm)
+}
+
 // This function is used to execute commands with os.Exec
 // and return the output or call os.Exit(1) on failure
 func execOrExit(cmdStr string, dir string) string {
-	cmds := strings.Split(cmdStr, " ")
+	cmds := strings.Split(strings.TrimSpace(cmdStr), " ")
 
 	cmd := exec.Command(cmds[0], cmds[1:]...)
 
@@ -80,7 +102,7 @@ func execOrExit(cmdStr string, dir string) string {
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Fatalf("Error running command %s: %v\nOutput: %s", cmdStr, err, output)
+		log.Fatalf("Error running command %s in %s %v\nOutput: %s", cmdStr, dir, err, output)
 	}
 
 	if DEBUG {
@@ -104,23 +126,46 @@ func createProject() {
 
 	execOrExit(cmd, "")
 
+	err := replaceModuleName(projectName, moduleName, projectName)
+
+	if err != nil {
+		log.Fatalf("error replacing module name: %s %s, %s", err.Error(), projectName, moduleName)
+	}
+
+	vars := BASE_ENV_VARS
+
 	cmd = "go get github.com/jetnoli/go-router"
 
 	if *GRCV != "" {
+		*GRCV = strings.TrimSpace(*GRCV)
 		cmd += fmt.Sprintf("@%s", *GRCV)
+		vars["GO_ROUTER_VERSION"] = *GRCV
 	}
 
 	execOrExit(cmd, projectName)
 
-	err := replaceModuleName(projectName, moduleName, projectName)
+	envPath := fmt.Sprintf("%s/.env", projectName)
+	err = createEnvFile(envPath, vars)
 
 	if err != nil {
-		log.Fatalf("error replacing module name %s, %s", projectName, moduleName)
+		log.Fatalf("error creating env file %s", err.Error())
 	}
 
 	execOrExit("templ generate", projectName)
 
 	execOrExit("go mod tidy", projectName)
+
+	fmt.Println("Project Created Successfully!")
+
+	fmt.Println("Generating Assets...")
+
+	router.CreateAssetsFile(fmt.Sprintf("./%s", projectName))
+
+}
+
+func generateAssets() {
+	router.CreateAssetsFile("./")
+	fmt.Println("Asset Map Generated Successfully!")
 }
 
 func main() {
@@ -143,7 +188,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scriptPath := "./create-repo.sh"
+	scriptPath := "create-repo.sh"
 
 	// Write the embedded script to a temporary file
 	err := os.WriteFile(scriptPath, script, 0755) // Give it executable permissions
@@ -154,5 +199,4 @@ func main() {
 
 	process()
 
-	fmt.Println("Project Created Successfully!")
 }

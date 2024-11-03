@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -12,10 +13,9 @@ type UserJwt struct {
 	ExpiresAt string
 }
 
-// TODO: Make an ENV VAR
-// TODO: Add ENV VAR reading logic here as a utility
-// TODO: Add Debug Logs Functionality
-var secret = []byte("MY_JWT_SECRET")
+// TODO: Make this more generic
+// TODO: Implement Standard JWT Claims
+var secret = []byte(os.Getenv("MY_JWT_SECRET"))
 
 func GenerateJwt(userId string) (string, error) {
 

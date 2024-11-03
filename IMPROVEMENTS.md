@@ -12,22 +12,18 @@
 * Clean Up File Reading
   * Make Consistent Flow
   * Use of AbsPath vs Relative in actual builds
-* Improve Env File Reading Flow
-* Replace Serve and Serve Dir with Built In Functionality
 * Setup Flow for DEBUG mode
 * Cleanup Logs
-* Review How Asset Paths are Passed, Perhaps Should be Tied to Context
 * Create Server Functionality in Router
 * Update ReadMe
+* Add Tests
 
 ### CLI
 * Improve Dummy API UI
 * Add Basic BubbleTea Interface
 * Add Config to Configure HTMX as Asset in Install Flow
 * Allow Root File Path to be Chosen
-* Add Docker 
-  * Run CLI ass a Docker App
-  * Add Docker File and Docker Compose to Static so it's included in template repo 
+* * Find a way to Test
 
 ## Version 0.2
 
@@ -36,8 +32,25 @@
 * Use FOP Structure for Config
 * Implement Ctx Object
 * Add SSR to Serve Templ
+* Review Middleware Interface
+* Improve Cancel Request Flow
+* Create Config File for All Options
+  * i.e. what supported assets
+  * module name
+  * version
+  * etc...
+
+* Add scss support
 
 ### CLI
 * Add DB to Router Creation, will Support
   * PostGres
   * SqlLite
+
+
+
+## Version 0.3
+
+### Router
+* Create a Utility for Working with OAuth
+* Socket Integration

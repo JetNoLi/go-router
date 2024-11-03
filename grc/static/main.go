@@ -4,28 +4,35 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/jetnoli/go-router/grc/static/routes"
+	"github.com/jetnoli/go-router/utils"
 
 	"github.com/jetnoli/go-router/router"
 )
 
 func main() {
+
+	utils.ReadEnv()
+
+	port := os.Getenv("PORT")
+
+	utils.Assert(port != "", "error: no port defined")
+
 	// Create Base Router to be Used as Server
 	r := router.CreateRouter("/", router.RouterOptions{
 		// Attach Middleware if Required
 		// PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 	})
 
-	compMap := router.LoadImports("./", *r)
-
 	r.Use("/health", routes.HealthRouter())
-	r.Use("/", routes.PageRouter(&compMap))
+	r.Use("/", routes.PageRouter())
 
 	// Define Server with Standard Http Library
 	server := http.Server{
-		Addr:         ":" + "3000",
+		Addr:         ":" + port,
 		ReadTimeout:  60 * time.Second,
 		WriteTimeout: 60 * time.Second,
 		Handler:      r.Mux,
