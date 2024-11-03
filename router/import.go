@@ -29,6 +29,7 @@ type ComponentAsset struct {
 
 // Removes . and .. from path, replaces with /
 func GetUrlFromPath(path string) string {
+	fmt.Println("getting url from path")
 	url := path
 
 	if len(url) <= 1 {
@@ -182,7 +183,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 	}
 
 	for _, file := range dir {
-		fmt.Println("file", file)
+		fmt.Println("file new", file)
 		fileName := file.Name()
 		fullPath := AppendPath(path, fileName)
 
@@ -251,14 +252,19 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 			index := strings.Index(fullPath, fileName)
 
+			fmt.Println("compAsset", compAsset)
+
 			(*compMap)[fullPath[:index-1]] = compAsset
 		} else if slices.Contains(SupportedAssetTypes, fileType) {
-
-			(*assetMap)[fullPath] = &Asset{
+			asset := Asset{
 				Path: fullPath,
 				Typ:  fileType,
 				Url:  GetUrlFromPath(fullPath),
 			}
+
+			fmt.Println("asset", asset)
+
+			(*assetMap)[fullPath] = &asset
 		} else {
 			fmt.Println("else", fullPath)
 		}
