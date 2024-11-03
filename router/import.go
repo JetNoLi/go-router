@@ -279,15 +279,26 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 	for path, compAsset := range *compMap {
 		splitPath := strings.Split(path, "/")
 
-		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+		// Check if final word of path is templ
+		// if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+		// 	index := strings.Index(path, splitPath[len(splitPath)-1])
+		// 	path = path[:index-1]
+		// }
+		if len(path) > 5 && path[len(path)-5:] == "templ" {
 			index := strings.Index(path, splitPath[len(splitPath)-1])
-			path = path[:index-1]
+			if index == -1 {
+				return fmt.Errorf("error getting child assets\npath: %s\ncompMap: %v", path, *compMap)
+			}
+			path = path[:index]
 		}
 
 		splitPath = strings.Split(childPath, ".")
 
-		if strings.Contains(splitPath[len(splitPath)-1], "templ") {
+		if len(path) > 5 && path[len(path)-5:] == "templ" {
 			index := strings.Index(path, splitPath[len(splitPath)-1])
+			if index == -1 {
+				return fmt.Errorf("error getting child assets\npath: %s\ncompMap: %v", childPath, *compMap)
+			}
 			childPath = childPath[:index-1]
 		}
 
