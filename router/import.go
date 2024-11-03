@@ -59,10 +59,10 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 		fmt.Println("error with abs path", absPath)
 		return nil, err
 	}
-	file, err := os.Open(path)
+	file, err := os.Open(absPath)
 
 	if err != nil {
-		fmt.Println("open file error: ", err.Error())
+		fmt.Println("open file error: ", err.Error(), " at abs path ", absPath)
 		return nil, err
 	}
 
