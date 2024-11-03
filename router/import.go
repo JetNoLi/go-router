@@ -29,26 +29,32 @@ type ComponentAsset struct {
 
 // Removes . and .. from path, replaces with /
 func GetUrlFromPath(path string) string {
-	if len(path) <= 1 {
-		if path == "." {
-			path = "/"
+	url := path
+
+	if len(url) <= 1 {
+		if url == "." {
+			url = "/"
 		}
 
-		return path
+		fmt.Println("url ", url, " path ", path)
+
+		return url
 	}
 
-	if path[0] == '.' {
-		if path[1] == '/' {
-			path = path[1:]
-		} else if path[1] == '.' {
-			tmp := GetUrlFromPath(path[1:])
-			path = tmp
+	if url[0] == '.' {
+		if url[1] == '/' {
+			url = url[1:]
+		} else if url[1] == '.' {
+			tmp := GetUrlFromPath(url[1:])
+			url = tmp
 		} else {
-			path = path[1:]
+			url = url[1:]
 		}
 	}
 
-	return path
+	fmt.Println("url ", url, " path ", path)
+
+	return url
 }
 
 // Combine 2 url paths, removing the trailing / and catering for overlapping /s
