@@ -162,8 +162,7 @@ func createProject() {
 
 	fmt.Println("Generating Assets...")
 
-	router.CreateAssetsFile(fmt.Sprintf("./%s", projectName))
-
+	execOrExit("grc generate-assets", projectName)
 }
 
 func generateAssets() {
