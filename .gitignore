@@ -17,7 +17,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-
 *vendor
 
 # Test app directory
@@ -26,3 +25,6 @@ test-app
 
 # Templ
 tmp
+
+# Build Files
+asset_map.json
