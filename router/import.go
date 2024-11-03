@@ -133,6 +133,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 // Read imports for components used
 // Read through components for assets used
 func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap *AssetMap) error {
+	fmt.Println("in register assets", path)
 	dir, err := os.ReadDir(path)
 
 	if err != nil {
@@ -140,7 +141,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 	}
 
 	for _, file := range dir {
-
+		fmt.Println("file", file)
 		fileName := file.Name()
 		fullPath := AppendPath(path, fileName)
 
