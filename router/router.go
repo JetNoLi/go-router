@@ -228,3 +228,11 @@ func (router Router) ServeDir(baseUrlPath string, dirPath string, options *Serve
 		router.Serve(route, filePath, &RouteOptions{})
 	}
 }
+
+func (router Router) ServeAssets(assetFilePath string) {
+	_, assetMap := ReadAssetsFile(assetFilePath)
+
+	for assetUrl, asset := range assetMap {
+		router.Serve(asset.Path, assetUrl, &RouteOptions{})
+	}
+}

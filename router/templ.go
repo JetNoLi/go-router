@@ -41,7 +41,7 @@ func (r Router) ServeTempl(route string, comp templ.Component, compMap *Componen
 	localPath := ""
 
 	for compPath, compAsset := range *compMap {
-		if !compAsset.isPage {
+		if !compAsset.IsPage {
 			continue
 		}
 

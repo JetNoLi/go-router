@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-const FixCategory = "addembedimport" // recognized by gopls ApplyFix
-
 // Prevent go pls from removing embed script
 var _ = embed.FS{}
 
@@ -27,10 +25,8 @@ var CMDS = map[string]CmdHandler{
 }
 
 var BASE_ENV_VARS = map[string]string{
-	"PORT":              "3000",
-	"TEMPL_VERSION":     "latest",
-	"GO_ROUTER_VERSION": "latest",
-	"APP_NAME":          "myapp",
+	"PORT":          "3000",
+	"TEMPL_VERSION": "latest",
 }
 
 // Flags
@@ -145,12 +141,6 @@ func createProject() {
 	execOrExit(cmd, projectName)
 
 	vars := BASE_ENV_VARS
-
-	vars["APP_NAME"] = projectName
-
-	if *GRCV != "" {
-		vars["GO_ROUTER_VERSION"] = *GRCV
-	}
 
 	envPath := fmt.Sprintf("%s/.env", projectName)
 	err = createEnvFile(envPath, vars)

@@ -27,10 +27,14 @@ func main() {
 		// PreHandlerMiddleware: []Router.MiddlewareHandler{middleware.DecodeToken},
 	})
 
-	compMap := router.LoadImports("./", *r)
+	_, assetMap := router.LoadImports("./")
+
+	for _, asset := range assetMap {
+		r.Serve(asset.Path, asset.Path, &router.RouteOptions{})
+	}
 
 	r.Use("/health", routes.HealthRouter())
-	r.Use("/", routes.PageRouter(&compMap))
+	r.Use("/", routes.PageRouter())
 
 	// Define Server with Standard Http Library
 	server := http.Server{

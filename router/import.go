@@ -5,22 +5,25 @@ package router
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"slices"
 	"strings"
 )
 
 type Asset struct {
-	Path string
-	Typ  string
+	Path string `json:"path"`
+	Url  string `json:"url"`
+	Typ  string `json:"typ"`
 }
 
 type ComponentAsset struct {
-	path     string
-	isPage   bool
-	children []string
-	assets   []Asset
+	Path     string   `json:"path"`
+	IsPage   bool     `json:"isPage"`
+	Children []string `json:"children"`
+	Assets   []Asset  `json:"assets"`
 }
 
 // Combine 2 url paths, removing the trailing / and catering for overlapping /s
@@ -118,10 +121,10 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 	}
 
 	return &ComponentAsset{
-		path:     path,
-		assets:   assets,
-		isPage:   strings.Contains(path, "pages"),
-		children: children,
+		Path:     path,
+		Assets:   assets,
+		IsPage:   strings.Contains(path, "pages"),
+		Children: children,
 	}, nil
 }
 
@@ -241,7 +244,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 		return fmt.Errorf("child does not exist in component map %s", childPath)
 	}
 
-	for _, nestedChildPath := range child.children {
+	for _, nestedChildPath := range child.Children {
 		err := GetChildAssets(compMap, nestedChildPath, assetMap)
 
 		if err != nil {
@@ -249,7 +252,7 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 		}
 	}
 
-	for _, asset := range child.assets {
+	for _, asset := range child.Assets {
 		if _, ok := (*assetMap)[asset.Path]; !ok {
 			(*assetMap)[asset.Path] = asset
 		}
@@ -263,14 +266,14 @@ func GetChildAssets(compMap *ComponentMap, childPath string, assetMap *AssetMap)
 func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 	compAsset := (*compMap)[path]
 
-	if !compAsset.isPage {
+	if !compAsset.IsPage {
 		fmt.Println("failing map", compAsset, "path is ", path)
 		return nil, fmt.Errorf("component at path %s is not a page", path)
 	}
 
 	assetMap := make(AssetMap)
 
-	for _, childPath := range compAsset.children {
+	for _, childPath := range compAsset.Children {
 		err := GetChildAssets(compMap, childPath, &assetMap)
 
 		if err != nil {
@@ -278,7 +281,7 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 		}
 	}
 
-	for _, asset := range compAsset.assets {
+	for _, asset := range compAsset.Assets {
 		assetMap[asset.Path] = asset
 	}
 
@@ -286,7 +289,7 @@ func CreatePageHead(compMap *ComponentMap, path string) (AssetMap, error) {
 }
 
 // Uses compononents, pages and assets path to load required imports
-func LoadImports(rootDir string, r Router) ComponentMap {
+func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 	compMap := make(ComponentMap)
 	assetMap := make(AssetMap)
 
@@ -319,8 +322,49 @@ func LoadImports(rootDir string, r Router) ComponentMap {
 			os.Exit(1)
 		}
 
-		r.Serve(assetUrl, asset.Path, &RouteOptions{})
+		asset.Url = assetUrl
 	}
 
-	return compMap
+	return compMap, assetMap
+}
+
+func CreateAssetsFile(fileName string, rootDir string) {
+	compMap, _ := LoadImports(rootDir)
+
+	file, err := os.Create(fileName)
+
+	if err != nil {
+		log.Fatalf("error creating file: %s", err.Error())
+	}
+	defer file.Close()
+
+	err = json.NewEncoder(file).Encode(compMap)
+
+	if err != nil {
+		log.Fatalf("error encoding file contents: %s", err.Error())
+	}
+}
+
+type AssetFile struct {
+	CompMap  ComponentMap `json:"compMap"`
+	AssetMap AssetMap     `json:"assetMap"`
+}
+
+func ReadAssetsFile(assetFilePath string) (ComponentMap, AssetMap) {
+	file, err := os.Open(assetFilePath)
+
+	if err != nil {
+		log.Fatal("Error opening file:", err.Error())
+	}
+	defer file.Close()
+
+	assetFile := AssetFile{}
+
+	err = json.NewDecoder(file).Decode(&assetFile)
+
+	if err != nil {
+		log.Fatal("Error decoding JSON:", err.Error())
+	}
+
+	return assetFile.CompMap, assetFile.AssetMap
 }
