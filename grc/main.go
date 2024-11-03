@@ -95,6 +95,8 @@ func createEnvFile(fileName string, vars map[string]string) error {
 func execOrExit(cmdStr string, dir string) string {
 	cmds := strings.Split(cmdStr, " ")
 
+	fmt.Println(cmds)
+
 	cmd := exec.Command(cmds[0], cmds[1:]...)
 
 	if dir != "" {
@@ -136,9 +138,9 @@ func createProject() {
 
 	cmd = "go get github.com/jetnoli/go-router"
 
-	// if *GRCV != "" {
-	// 	cmd += fmt.Sprintf("@%s", *GRCV)
-	// }
+	if *GRCV != "" {
+		cmd += fmt.Sprintf("@%s", *GRCV)
+	}
 
 	execOrExit(cmd, projectName)
 
