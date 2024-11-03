@@ -56,6 +56,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 	file, err := os.Open(path)
 
 	if err != nil {
+		fmt.Println("open file error: ", err.Error())
 		return nil, err
 	}
 
@@ -68,6 +69,8 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		fmt.Println("in scanner", line)
 
 		// Handle Imports
 		//TODO: Cater for multi line import syntax
@@ -118,6 +121,7 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
+		fmt.Println("scanner error", err.Error())
 		return nil, err
 	}
 
