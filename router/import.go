@@ -261,7 +261,7 @@ func RegisterAssets(path string, recursive bool, compMap *ComponentMap, assetMap
 
 			fmt.Println("compAsset", compAsset)
 
-			(*compMap)[fullPath[:index-1]] = compAsset
+			(*compMap)[GetUrlFromPath(fullPath[:index-1])] = compAsset
 		} else if slices.Contains(SupportedAssetTypes, fileType) {
 			asset := Asset{
 				Path: fullPath,
