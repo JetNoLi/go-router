@@ -99,6 +99,8 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 
 	defer file.Close()
 
+	path = GetUrlFromPath(path)
+
 	scanner := bufio.NewScanner(file)
 
 	children := make([]string, 0)
@@ -122,6 +124,11 @@ func ParsePageContents(path string) (*ComponentAsset, error) {
 				if componentIndex == -1 {
 					return nil, fmt.Errorf("invalid path for component %s %s", childPath, line)
 				}
+
+				if childPath[0] == '.' {
+					childPath = childPath[1:]
+				}
+
 				children = append(children, childPath)
 			}
 
