@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -329,7 +330,15 @@ func LoadImports(rootDir string) (ComponentMap, AssetMap) {
 }
 
 func CreateAssetsFile(fileName string, rootDir string) {
+	absPath, err := filepath.Abs(rootDir)
+
+	if err != nil {
+		fmt.Println("error getting absPath", err.Error())
+	}
+
 	compMap, _ := LoadImports(rootDir)
+
+	fmt.Println(compMap, absPath)
 
 	file, err := os.Create(fileName)
 
