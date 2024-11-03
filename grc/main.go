@@ -126,13 +126,13 @@ func createProject() {
 
 	cmd := fmt.Sprintf("bash create-repo.sh %s %s", projectName, moduleName)
 
+	execOrExit(cmd, "")
+
 	err := replaceModuleName(projectName, moduleName, projectName)
 
 	if err != nil {
 		log.Fatalf("error replacing module name: %s %s, %s", err.Error(), projectName, moduleName)
 	}
-
-	execOrExit(cmd, "")
 
 	cmd = "go get github.com/jetnoli/go-router"
 
