@@ -23,7 +23,6 @@ func PrepareLink(link string) string {
 		pathType = AssetsPath
 
 		if i == -1 {
-
 			i = strings.Index(link, ComponentsPath)
 			pathType = ComponentsPath
 
@@ -32,17 +31,18 @@ func PrepareLink(link string) string {
 				return link
 			}
 		}
-
 	}
 
+	//  "assets" included in url - assets/image.png
 	if pathType == AssetsPath {
 		return link[i:]
 	}
 
+	// path type not included in url
 	return link[i+len(pathType):]
 }
 
-func PageHead(assets AssetMap) templ.Component {
+func PageHead(assets AssetMap, headData *templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -103,6 +103,10 @@ func PageHead(assets AssetMap) templ.Component {
 				}
 			}
 		}
+		templ_7745c5c3_Err = optional(headData).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -141,7 +145,7 @@ func optional(comp *templ.Component) templ.Component {
 	return Empty()
 }
 
-func Page(title string, comp *templ.Component, assets AssetMap) templ.Component {
+func Page(title string, comp *templ.Component, assets AssetMap, headData *templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -166,7 +170,7 @@ func Page(title string, comp *templ.Component, assets AssetMap) templ.Component 
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 66, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `router/page.templ`, Line: 67, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -176,7 +180,7 @@ func Page(title string, comp *templ.Component, assets AssetMap) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PageHead(assets).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PageHead(assets, headData).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -196,6 +200,12 @@ func Page(title string, comp *templ.Component, assets AssetMap) templ.Component 
 	})
 }
 
-func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap) error {
-	return Page("title", &comp, assets).Render(r.Context(), w)
+func Render(w http.ResponseWriter, r *http.Request, comp templ.Component, assets AssetMap, optsFunc ...ServeTemplOptsFunc) error {
+	opts := &ServeTemplOptions{}
+
+	for _, optFn := range optsFunc {
+		optFn(opts)
+	}
+
+	return Page("title", &comp, assets, opts.HeadData).Render(r.Context(), w)
 }

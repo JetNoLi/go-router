@@ -17,13 +17,14 @@
 * Create Server Functionality in Router
 * Update ReadMe
 * Add Tests
+* Add in way to pass head data
 
 ### CLI
 * Improve Dummy API UI
 * Add Basic BubbleTea Interface
 * Add Config to Configure HTMX as Asset in Install Flow
 * Allow Root File Path to be Chosen
-* * Find a way to Test
+* Find a way to Test
 
 ## Version 0.2
 

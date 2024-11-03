@@ -8,7 +8,23 @@ import (
 	"github.com/a-h/templ"
 )
 
-func (r Router) ServeTempl(route string, comp templ.Component, compMap *ComponentMap) error {
+type ServeTemplOptions struct {
+	HeadData *templ.Component
+}
+
+type ServeTemplOptsFunc = func(opts *ServeTemplOptions)
+
+func WithHead(headData *templ.Component) ServeTemplOptsFunc {
+	return func(opts *ServeTemplOptions) {
+		if opts == nil {
+			opts = &ServeTemplOptions{}
+		}
+
+		opts.HeadData = headData
+	}
+}
+
+func (r Router) ServeTempl(route string, comp templ.Component, compMap *ComponentMap, optsFuncs ...ServeTemplOptsFunc) error {
 
 	// assumption: route contains page name
 	routeSplit := strings.Split(route, "/")

@@ -13,7 +13,7 @@ func PageRouter() *http.ServeMux {
 
 	compMap, _ := r.ServeAssets("./" + router.AssetMapFileName)
 
-	r.ServeTempl("/", home.Index(), &compMap)
+	r.ServeTempl("/", home.Index(), &compMap, router.WithHead(home.PageHead()))
 
 	return r.Mux
 }
